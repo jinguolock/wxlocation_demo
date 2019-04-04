@@ -1,0 +1,90 @@
+<view class="container">
+    <!--view class="logo">
+      <image src="../../images/logo.png"></image>
+    </view-->
+
+
+    
+  <view class="find-list">
+    <text class="tt-text">配置参数</text>
+    <view class="rowclass">
+    <text class="open-text">发送间隔</text>
+    <button bindtap="sendInterval_2"  class="open-button" type='primary'>2秒 </button>
+    <button  bindtap="sendInterval_5" class="open-button" type='primary'>5秒 </button>
+    <button bindtap="sendInterval_10" class="open-button" type='primary'>10秒 </button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">蓝牙扫描</text>
+    <button bindtap="blescan_fast"  class="open-button" type='primary'>快 </button>
+    <button   bindtap="blescan_normal" class="open-button" type='primary'>普通 </button>
+    <button  bindtap="blescan_slow" class="open-button" type='primary'>慢 </button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">射频距离</text>
+    <button  bindtap="sf_short" class="open-button" type='primary'>近</button>
+    <button   bindtap="sf_normal" class="open-button" type='primary'>普通 </button>
+    <button  bindtap="sf_long" class="open-button" type='primary'>远</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">移动触发</text>
+    <button  bindtap="acc_small"  class="open-button" type='primary'>灵敏</button>
+    <button  bindtap="acc_normal"  class="open-button" type='primary'>普通 </button>
+    <button  bindtap="acc_long"  class="open-button" type='primary'>不灵敏</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">持续发送</text>
+    <button  bindtap="sendtime_10"  class="open-button" type='primary'>10秒</button>
+    <button  bindtap="sendtime_30" class="open-button" type='primary'>30秒</button>
+    <button  bindtap="sendtime_60" class="open-button" type='primary'>60秒</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">信标过滤</text>
+    <button bindtap="beacon_no"   class="open-button" type='primary'>不过滤</button>
+    <button bindtap="beacon_yes"  class="open-button" type='primary'>过滤</button>
+    </view>
+  </view>
+
+  <view class="find-list">
+    <text class="tt-text">当前或配置参数:{{deviceId}}</text>
+    <view class="rowclass">
+    <text class="open-text">发送间隔</text>
+    <text class="pp-text">{{sendIntervalstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">蓝牙扫描</text>
+    <text class="pp-text">{{bleScanstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">射频距离</text>
+    <text class="pp-text">{{loraSfstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">移动触发</text>
+    <text class="pp-text">{{accThresstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">持续发送</text>
+    <text class="pp-text">{{sendTimestr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">信标过滤</text>
+    <text class="pp-text">{{beaconstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">电池电量</text>
+    <text class="pp-text">{{batterystr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">固件版本</text>
+    <text class="pp-text">{{hardwarestr}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="rowclass">
+      <button style='margin-top: 10px;' bindtap="updateParameter"  class="login-btn" form-type="alarm">修改</button>
+      <button style='margin-top: 10px;' bindtap="readParameter"  class="login-btn" form-type="alarm">读取</button>
+    </view>
+  </view>
+  <text class="open-text">{{motto}}</text>
+</view>
