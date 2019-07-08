@@ -6,12 +6,14 @@ let myProcess = {
   sendBleByAuth(deviceId, content, command, reFunc, msgFunc, sendFinishFunc,failFunc) {
     var _this = this;
     var willsendbyte;
-    myApi.webmain("location", "getpwd", { id: deviceId }, function (obj) {
+    var did=deviceId.substr(2);
+    console.log("get pwd by did:"+did);
+    myApi.webmain("location", "getpwd", { id: did }, function (obj) {
       if (obj != null && obj.pwd != null) {
         msgFunc && msgFunc("数据完成，准备操作……")
         willsendbyte = _this.getHexByStr(obj.pwd);
         //simpleSendBleMsg(deviceName,content,crypt,command,timeout,isCloseFinish,reFunc,msgFunc,failFunc)
-        blueApi.simpleSendBleMsg("IR" + deviceId, content, willsendbyte, command, 30000, true, reFunc, msgFunc, sendFinishFunc,failFunc)
+        blueApi.simpleSendBleMsg( deviceId, content, willsendbyte, command, 30000, true, reFunc, msgFunc, sendFinishFunc,failFunc)
       }
     }, function (err) {
       msgFunc && msgFunc("准备数据失败，网络错误:"+err)
@@ -27,6 +29,20 @@ let myProcess = {
      var content = new Uint8Array(1);
      content[0]=1;
     this.sendBleByAuth(deviceId, content, 0x30,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
+  syncParameter_station(deviceId, msgFunc, reFunc) {
+    var _this = this;
+    // var content = new Uint8Array(4500);
+    // for(var i=0;i<4500;i++){
+    //   content[i] = (i&0xff);
+    // }
+    var content = new Uint8Array(1);
+    content[0] = 1;
+    this.sendBleByAuth(deviceId, content, 0x41,
       function (msg) {
         console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
         reFunc && reFunc(msg);
@@ -60,7 +76,51 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
-  
+  configParameter_stationNet(deviceId, ip, mask, gw, dns, sendto, isstatic, msgFunc, reFunc) {
+    var _this = this;
+    // var content = new Uint8Array(4500);
+    // for(var i=0;i<4500;i++){
+    //   content[i] = (i&0xff);
+    // }
+    var ipArr = this.getIpArrByStr(ip);
+    var maskArr = this.getIpArrByStr(mask);
+    var gwArr = this.getIpArrByStr(gw);
+    var dnsArr = this.getIpArrByStr(dns);
+    var sendtoArr = this.getIpArrByStr(sendto);
+
+    var content = new Uint8Array(21);
+    var ptr=0;
+    for(var i=0;i<4;i++){
+      content[ptr]=ipArr[i];
+      ptr++;
+    }
+    for (var i = 0; i < 4; i++) {
+      content[ptr] = maskArr[i];
+      ptr++;
+    }
+    for (var i = 0; i < 4; i++) {
+      content[ptr] = gwArr[i];
+      ptr++;
+    }
+    for (var i = 0; i < 4; i++) {
+      content[ptr] = dnsArr[i];
+      ptr++;
+    }
+    for (var i = 0; i < 4; i++) {
+      content[ptr] = sendtoArr[i];
+      ptr++;
+    }
+    content[ptr] = isstatic&0xff;
+    ptr++;
+
+    //content[11] = 0xC6;
+    //content[12] = 0xB1;
+    this.sendBleByAuth(deviceId, content, 0x40,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
   getStrByHex(hexArr){
     var hexStr = '';
     for (var i = 0; i < hexArr.length; i++) {
@@ -92,6 +152,14 @@ let myProcess = {
       re[i] = parseInt(strs[i], 16) & 0xff;
     }
 
+    return re;
+  },
+  getIpArrByStr(ipStr){
+    var strs = ipStr.split(".");
+    var re = new Uint8Array(strs.length);
+    for (var i = 0; i < strs.length; i++) {
+      re[i] = parseInt(strs[i], 10) & 0xff;
+    }
     return re;
   },
   getHexByStr2(hexStr) {

@@ -1,13 +1,46 @@
-<view class="container">
-
-  <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="items">
-  <view class="find-items">
-      <text >ID:{{items.NodeId}}</text>
+<view class="home-wrap">
+  <swiper indicator-dots="true" autoplay="{{autoplay}}" duration="{{duration}}" interval="{{interval}}">
+    <view wx:for="{{banner}}" wx:key="unique">
+      <swiper-item>
+        <view>
+          <navigator url="{{item.target}}"><image src="http://www.jinjufocus.com/images/gateway3.jpg" mode="scaleToFill center" class="banner"></image></navigator>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view>
+          <navigator url="{{item.target}}"><image src="http://www.jinjufocus.com/images/location02.jpg" mode="scaleToFill center" class="banner"></image></navigator>
+        </view>
+      </swiper-item>
     </view>
-    
-    <view class="find-items">
-      <button data-aid="{{items.NodeId}}" bindtap="tocfg" class="open-button" type='primary'>参数配置 </button>
-       <text  class="earnest-money">{{motto[items.NodeId]}}</text>
+  </swiper>
+  <view class="scroll-txt">
+    <text class="scroll-ads"></text>
+  </view>
+  <!--view class="ads-list">
+    <view class="ads-item" wx:for="{{advertise}}" wx:key="unique" wx:for-item="item">
+      <image src="{{item.image}}" mode="scaleToFill center" class="sub-banner"></image>
+    </view>
+  </view-->
+  
+  <view class="workbench">
+    <text class="title">工具箱</text>
+    <view class="list">
+      <view class="items">
+        <image bindtap="toStationCfg" src="../../images/home_car_source@2x.png" class="service-icon"></image>
+        <text>基站配置</text>
+      </view>
+      <view bindtap="toLocationCfg" class="items">
+        <image src="../../images/home_headlines@2x.png" class="service-icon"></image>
+        <text>定位配置</text>
+      </view>
+      <view bindtap="toBeaconCfg" class="items">
+        <image src="../../images/home_finance@2x.png" class="service-icon"></image>
+        <text>锚点配置</text>
+      </view>
+      <view class="items">
+        <image src="../../images/home_logistical@2x.png" class="service-icon"></image>
+        <text>巡检配置</text>
+      </view>
     </view>
   </view>
 </view>

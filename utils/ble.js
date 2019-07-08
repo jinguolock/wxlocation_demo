@@ -5,6 +5,7 @@ var char_tx = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 var char_rx = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 var myNusDataCache = new Uint8Array(8000);
 var myNusDataCache_length = 0;
+var stationMap=new Object();
 var timerId;
 let blueApi = {
   blue_data: {
@@ -14,6 +15,13 @@ let blueApi = {
     notify_id: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E",
     startTransfer:0,
     currentLength:0
+  },
+  getStationNames(){
+    var re=new Array();
+    for (let i in stationMap) {
+      re.push(i);
+    }
+    return re;
   },
   getCacheReturnContent(){
    // this.getcheck(myNusDataCache, 0, bs.length) & 0xff;
@@ -76,6 +84,20 @@ let blueApi = {
     msgFunc && msgFunc("未连接门锁，蓝牙失败！");
     failFunc && failFunc();
     }, 15000);
+  },
+  searchBleDevices(pre) {
+    if (!wx.openBluetoothAdapter) {
+      this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
+      return;
+    }
+
+    var _this = this;
+    wx.openBluetoothAdapter({
+      success: function (res) {
+        console.log("ble ready complete")
+        _this.startSearchBleNames(pre);
+      }
+    })
   },
   connect() {
     if (!wx.openBluetoothAdapter) {
@@ -244,9 +266,9 @@ let blueApi = {
       //var ss=[0xAF];
       _this.addToCache(res.value);
       //_this.sendHex(ss);
-     // let msg = _this.arrayBufferToHexString(res.value);
+      let msg = _this.arrayBufferToHexString(res.value);
      // _this.onNotifyListener && _this.onNotifyListener(msg);
-     // console.log(msg);
+      console.log(msg);
     })
   },
   disconnect() {
@@ -283,6 +305,28 @@ let blueApi = {
       }
     })
   },
+  startSearchBleNames(pre) {
+    var _this = this;
+    stationMap = new Object();
+    wx.startBluetoothDevicesDiscovery({
+      services: [],
+      success(res) {
+        wx.onBluetoothDeviceFound(function (res) {
+          //console.log("device length:" + res.devices[0].name )
+          //console.log("device length:" + res.devices.length + "device name:" + res.devices[0].name + ";device mac:" + res.devices[0].deviceId)
+          //var device = _this.filterDevice(res.devices);
+          if (res.devices[0].name.length>0){
+            var st = res.devices[0].name.substr(0,2);
+            if (st == pre && res.devices[0].name.length==10){
+              console.log("get station  name:" + res.devices[0].name);
+              stationMap[res.devices[0].name] = res.devices[0].deviceId
+            }
+          }
+          
+        });
+      }
+    })
+  },
   startSearch() {
     var _this = this;
     wx.startBluetoothDevicesDiscovery({
@@ -303,6 +347,7 @@ let blueApi = {
       }
     })
   },
+
   //连接到设备
   connectDevice() {
     var _this = this;

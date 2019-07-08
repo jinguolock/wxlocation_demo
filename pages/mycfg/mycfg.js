@@ -144,7 +144,7 @@ Page({
       mypage.setData({motto: "数据不完整!"});
       return;
     }
-    myProcess.configParameter(mypage.data.deviceId, sendInterval, bleScan, loraSf, accThres, sendTime,beaconMask, function (msg){
+    myProcess.configParameter("IR"+mypage.data.deviceId, sendInterval, bleScan, loraSf, accThres, sendTime,beaconMask, function (msg){
       mypage.setMotto(msg)
     }, function (arr) {
       mypage.setData({ motto: "配置完成!" });
@@ -154,7 +154,7 @@ Page({
   readParameter: function (e) {
     console.log(e.detail.value);
     console.log("readParameter");
-    myProcess.syncParameter(mypage.data.deviceId, function (msg) {
+    myProcess.syncParameter("IR" +mypage.data.deviceId, function (msg) {
       mypage.setMotto(msg)
     },function(arr){
       if(arr==null||arr.length!=19){

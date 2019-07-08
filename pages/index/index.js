@@ -1,66 +1,70 @@
+//index.js
+//获取应用实例
+var app = getApp()
 var util = require('../../utils/util');
-var blueApi = require('../../utils/ble.js').Ble;
-var myApi = require('../../utils/myapi.js').MyServerApi;
-var myProcess = require('../../utils/myprocess.js').MyProcess;
 
-const app = getApp()
-var mypage
-var selectApartment
-var selectAuthId
-var authapps
-var authappMap = new Object()
-var userPhone
-var userPwd
-var flag = 0
-var lockPwd
-var lockVersion
-var lockSn
-var lockinfo
-var locklist
-var selectNodeId
-var willsendbyte
 Page({
   data: {
-    motto: "",
-    findList: null,
-    lockName: '',
-    lockDesc: '',
-    motto: {},
-    userInfo: {},
-    hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo'),
-    array: []
-
+    banner: null,
+    autoplay: true,
+    interval: 2000,
+    duration: 1000,
+    txtAds: null,
+    isclient: true,
+    advertise: null
   },
-
-  onLoad: function (options) {
-    // 页面初始化 options为页面跳转所带来的参数
+  /*
+  * 首页banner
+  */
+  setBanner: function () {
     let that = this;
-    mypage = this;
-    myApi.webmain("datalist", "lock_node", null, function (obj) {
-      console.log(obj)
-      locklist = obj
-
-      that.setData({
-        findList: locklist
-      })
-      // that.setMotto("ok")
-    })
+    that.setData({
+      banner: [{ "id": 78, "title": "\u8f66\u6e90\u5b9d\u7cbe\u9009\u8f66", "image": "http://www.jinjufocus.com/images/gateway3.jpg", "type": 1, "target": "https:\/\/h5.cyb.kuaiqiangche.com\/special\/activitySpecialDetail.html?id=13&v=0918&_source=banner_20171113", "target_id": 0 }]
+    });
+  },
+  /**
+   * 首页文字广告
+   */
+  setTxtAds: function(){
+    let that = this;
+    that.setData({
+      txtAds: []
+    });
+  },
+  /**
+   * 首页两块子banner
+   */
+  setSubBanner: function(){
+    let that = this;
+    that.setData({
+      advertise: [{ "image": "http:\/\/www.jinjufocus.com\/images\/gateway3.jpg", "type": 2, "target": 3950955 }, { "image": "https:\/\/image.kuaiqiangche.com\/data\/attachment\/2018-07-03\/1530589499134884.jpg", "type": 2, "target": 3950987 }]
+    });
+  },
+  /**
+   * 模块入口
+   */
+  setModule: function(){
 
   },
-  setMotto: function (str) {
-    var obj = new Object();
-    obj[selectNodeId] = str;
-    mypage.setData({ motto: obj })
+  /**
+   * 入口
+   */
+  onLoad: function () {
+    var that = this;
+    //wx.navigateTo({ url: "" })
+    that.setBanner();
+    that.setTxtAds();
+    that.setSubBanner();
+    that.setModule();
   },
-  tocfg: function (e) {
-    console.log("tocfg")
-    selectNodeId = e.target.dataset.aid;
-    wx.setStorageSync('configLocationId', selectNodeId)
-    wx.navigateTo({ url: "../mycfg/mycfg" })
+  toStationCfg:function(){
+    //wx.navigateTo({ url: "index" })
+    wx.switchTab({ url: "../station/station" })
+  },
+  toLocationCfg: function () {
+    wx.switchTab({ url: "../location/location" })
+  },
+  toBeaconCfg: function () {
+    //wx.navigateTo({ url: "../mystationcfg/mystationcfg" })
   }
-
-
-
-  //end method
-})
+});
