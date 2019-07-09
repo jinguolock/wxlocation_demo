@@ -66,5 +66,7 @@ Page({
   },
   toBeaconCfg: function () {
     //wx.navigateTo({ url: "../mystationcfg/mystationcfg" })
+    wx.navigateTo({ url: "../mycfg/mycfg" })
+    
   }
 });

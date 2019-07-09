@@ -76,6 +76,37 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
+  configParameter2(deviceId, sendInterval, sendtime, beaconMask,beaconValue, msgFunc, reFunc) {
+    var _this = this;
+    // var content = new Uint8Array(4500);
+    // for(var i=0;i<4500;i++){
+    //   content[i] = (i&0xff);
+    // }
+    var lorasf=12;
+    var accthres=28;
+    var blescan=160;
+    var content = new Uint8Array(13);
+    content[0] = lorasf & 0xff;
+    content[1] = sendInterval & 0xff;
+    content[2] = accthres & 0xff;
+    content[3] = 0 & 0xff;
+    content[4] = sendtime & 0xff;
+    content[5] = (blescan >> 8) & 0xff;
+    content[6] = blescan & 0xff;
+    content[7] = 0 & 0xff;
+    content[8] = 80 & 0xff;
+    content[9] = (beaconMask >> 8) & 0xff;
+    content[10] = beaconMask & 0xff;
+    content[11] = (beaconValue >> 8) & 0xff;
+    content[12] = beaconValue & 0xff;
+    //content[11] = 0xC6;
+    //content[12] = 0xB1;
+    this.sendBleByAuth(deviceId, content, 0x31,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
   configParameter_stationNet(deviceId, ip, mask, gw, dns, sendto, isstatic, msgFunc, reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);

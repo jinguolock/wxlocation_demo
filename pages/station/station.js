@@ -12,7 +12,7 @@ var authappMap = new Object()
 var intervalid;
 var selectNodeId
 var willsendbyte
-
+var timeIndex
 Page({
   data: {
     motto: "",
@@ -32,6 +32,7 @@ Page({
     mypage = this;
     blueApi.searchBleDevices("IS");
     intervalid = setInterval(mypage.mytimeout, 1000);
+    timeIndex = 0;
   },
   onHide: function () {
     console.log("onHide")
@@ -43,10 +44,16 @@ Page({
     
   },
   mytimeout:function(){
-    var list=blueApi.getStationNames();
+    var list = blueApi.getStationNameRssi();
         this.setData({
           findList: list
        })
+    timeIndex++;
+    if (timeIndex >= 60) {
+      timeIndex = 0;
+      blueApi.stopSearch();
+      blueApi.searchBleDevices("IS");
+    }
   },
   setMotto: function (str) {
     var obj = new Object();

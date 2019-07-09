@@ -2,12 +2,12 @@
 
   <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="item">
   <view class="find-items">
-      <text >基站:{{item}}</text>
+      <text >基站:{{item.deviceName}}</text>
     </view>
     
     <view class="find-items">
-      <button data-aid="{{item}}" bindtap="toStationcfg" class="open-button" type='primary'>参数配置 </button>
-       <text  class="earnest-money">{{motto[item]}}</text>
+      <button data-aid="{{item.deviceName}}" bindtap="toStationcfg" class="open-button" type='primary'>参数配置 </button>
+       <text  class="earnest-money">{{item.rssi}}</text>
     </view>
   </view>
 </view>

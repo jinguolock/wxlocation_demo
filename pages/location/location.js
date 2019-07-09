@@ -20,6 +20,7 @@ var locklist
 var selectNodeId
 var willsendbyte
 var intervalid
+var timeIndex
 Page({
   data: {
     motto: "",
@@ -38,6 +39,7 @@ Page({
     let that = this;
     mypage = this;
     blueApi.searchBleDevices("IR");
+    timeIndex=0;
     intervalid = setInterval(mypage.mytimeout, 1000);
   },
   onHide: function () {
@@ -66,18 +68,25 @@ Page({
     mypage.setData({ motto: obj })
   },
   tocfg: function (e) {
-    console.log("tocfg")
+    
     clearInterval(intervalid)
     blueApi.stopSearch();
     selectNodeId = e.target.dataset.aid;
+    console.log("tocfg,nodeId:" + selectNodeId)
     wx.setStorageSync('configLocationId', selectNodeId)
     wx.navigateTo({ url: "../mycfg/mycfg" })
   },
    mytimeout: function () {
-    var list = blueApi.getStationNames();
+     var list = blueApi.getStationNameRssi();
     this.setData({
       findList: list
     })
+     timeIndex++;
+     if (timeIndex>=60){
+       timeIndex=0;
+      blueApi.stopSearch();
+      blueApi.searchBleDevices("IR");
+    }
   },
 
 

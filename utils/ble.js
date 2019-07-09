@@ -23,6 +23,19 @@ let blueApi = {
     }
     return re;
   },
+  getStationNameRssi() {
+    var re = new Array();
+    for (let i in stationMap) {
+      var o=new Object();
+      o.deviceName=i;
+      o.rssi = stationMap[i];
+      re.push(o);
+    }
+    return re;
+  },
+  clearNameRssi() {
+    stationMap=new Object();
+  },
   getCacheReturnContent(){
    // this.getcheck(myNusDataCache, 0, bs.length) & 0xff;
     // var length = ((myNusDataCache[4] << 8) & 0xFF00) | (myNusDataCache[5] & 0xFF);
@@ -92,6 +105,7 @@ let blueApi = {
     }
 
     var _this = this;
+    this.clearNameRssi() 
     wx.openBluetoothAdapter({
       success: function (res) {
         console.log("ble ready complete")
@@ -312,14 +326,14 @@ let blueApi = {
       services: [],
       success(res) {
         wx.onBluetoothDeviceFound(function (res) {
-          //console.log("device length:" + res.devices[0].name )
+          console.log("device length:" + res.devices[0].name )
           //console.log("device length:" + res.devices.length + "device name:" + res.devices[0].name + ";device mac:" + res.devices[0].deviceId)
           //var device = _this.filterDevice(res.devices);
           if (res.devices[0].name.length>0){
             var st = res.devices[0].name.substr(0,2);
             if (st == pre && res.devices[0].name.length==10){
               console.log("get station  name:" + res.devices[0].name);
-              stationMap[res.devices[0].name] = res.devices[0].deviceId
+              stationMap[res.devices[0].name] = res.devices[0].RSSI
             }
           }
           

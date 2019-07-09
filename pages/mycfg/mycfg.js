@@ -5,33 +5,21 @@ const app = getApp()
 var mypage
 var locationId
 var sendInterval
-var bleScan
-var loraSf
-var accThres
 var sendTime
 var battery
 var hardware
 var beaconMask
-var sendIntervalarr = [2, 5, 10]
-var bleScanarr = [160, 320, 512]
-var loraSfarr = [7, 10, 11]
-var accThresarr = [12, 28, 46]
-var sendTimearr = [10, 30, 60]
-var sendIntervalstrarr = ["2秒", "5秒", "10秒"]
-var bleScanstrarr = ["快", "普通", "慢"]
-var loraSfstrarr = ["近", "普通", "远"]
-var accThresstrarr = ["灵敏", "普通", "不灵敏"]
-var sendTimestrarr = ["10秒", "30秒", "60秒"]
+var beaconValue
+
 Page({
   data: {
     deviceId: "",
     sendIntervalstr:"",
-    bleScanstr: "",
-    loraSfstr: "",
-    accThresstr: "",
     sendTimestr: "",
     batterystr: "",
     hardwarestr: "",
+    maskstr: "",
+    alarmstr: "",
     beaconstr: "",
     motto:""
   },
@@ -51,11 +39,20 @@ Page({
     }
     return -1;
   },
+  onShow: function () {
+    //console.log("station onShow")
+    let that = this;
+    mypage = this;
+    //blueApi.searchBleDevices();
+    // intervalid = setInterval(mypage.mytimeout, 1000);
+    locationId = wx.getStorageSync('configLocationId')
+    console.log("my locationId:" + locationId)
+    mypage.setData({
+      deviceId: locationId
+    })
+  },
   onLoad: function () {
     mypage = this
-    mypage.setData({
-      deviceId: wx.getStorageSync('configLocationId')
-    })
     // var text = '123456';
     // var textBytes = aesjs.utils.utf8.toBytes(text);
 
@@ -68,83 +65,50 @@ Page({
     var obj = new Object();
     mypage.setData({ motto: str })
   },
-  sendInterval_2: function (e) {
-    mypage.setData({ sendIntervalstr: sendIntervalstrarr[0] })
-    sendInterval = sendIntervalarr[0]
+  sendIntervalInputEvent: function (e) {
+    sendInterval = e.detail.value
   },
-  sendInterval_5: function (e) {
-    mypage.setData({ sendIntervalstr: sendIntervalstrarr[1] })
-    sendInterval = sendIntervalarr[1]
+  sendTimeInputEvent: function (e) {
+    sendTime = e.detail.value
   },
-  sendInterval_10: function (e) {
-    mypage.setData({ sendIntervalstr: sendIntervalstrarr[2] })
-    sendInterval = sendIntervalarr[2]
+  filterMaskInputEvent: function (e) {
+    beaconMask = e.detail.value
   },
-  blescan_fast: function (e) {
-    mypage.setData({ bleScanstr: bleScanstrarr[0] })
-    bleScan = bleScanarr[0]
+  filterValueInputEvent: function (e) {
+    beaconValue = e.detail.value
   },
-  blescan_normal: function (e) {
-    mypage.setData({ bleScanstr: bleScanstrarr[1] })
-    bleScan = bleScanarr[1]
-  },
-  blescan_slow: function (e) {
-    mypage.setData({ bleScanstr: bleScanstrarr[2] })
-    bleScan = bleScanarr[2]
-  },
-  sf_short: function (e) {
-    mypage.setData({ loraSfstr: loraSfstrarr[0] })
-    loraSf = loraSfarr[0]
-  },
-  sf_normal: function (e) {
-    mypage.setData({ loraSfstr: loraSfstrarr[1] })
-    loraSf = loraSfarr[1]
-  },
-  sf_long: function (e) {
-    mypage.setData({ loraSfstr: loraSfstrarr[2] })
-    loraSf = loraSfarr[2]
-  },
-  acc_small: function (e) {
-    mypage.setData({ accThresstr: accThresstrarr[0] })
-    accThres = accThresarr[0]
-  },
-  acc_normal: function (e) {
-    mypage.setData({ accThresstr: accThresstrarr[1] })
-    accThres = accThresarr[1]
-  },
-  acc_long: function (e) {
-    mypage.setData({ accThresstr: accThresstrarr[2] })
-    accThres = accThresarr[2]
-  },
-  sendtime_10: function (e) {
-    mypage.setData({ sendTimestr: sendTimestrarr[0] })
-    sendTime = sendTimearr[0]
-  },
-  sendtime_30: function (e) {
-    mypage.setData({ sendTimestr: sendTimestrarr[1] })
-    sendTime = sendTimearr[1]
-  },
-  sendtime_60: function (e) {
-    mypage.setData({ sendTimestr: sendTimestrarr[2] })
-    sendTime = sendTimearr[2]
-  },
-  beacon_no: function (e) {
-    mypage.setData({ beaconstr: "不过滤" })
-    beaconMask = 0
-  },
-  beacon_yes: function (e) {
-    mypage.setData({ sendTimestr: "过滤" })
-    beaconMask = 0xFFFF
-  },
-
   updateParameter: function (e) {
 
-    if (sendInterval == null || bleScan == null || loraSf == null || accThres == null || sendTime==null){
+    if (sendInterval == null || sendTime == null || beaconMask == null || beaconValue == null ){
       console.log("data error")
       mypage.setData({motto: "数据不完整!"});
       return;
     }
-    myProcess.configParameter("IR"+mypage.data.deviceId, sendInterval, bleScan, loraSf, accThres, sendTime,beaconMask, function (msg){
+    var sendIntVal = parseInt(sendInterval,10);
+    var sendTimeVal = parseInt(sendTime, 10);
+    var beaconMaskVal = parseInt(beaconMask, 16);
+    var beaconValueVal = parseInt(beaconValue, 16);
+    if(!(sendIntVal>2)){
+      console.log("sendIntVal error:" + sendIntVal)
+      mypage.setData({ motto: "发送间隔数据有误!" });
+      return;
+    }
+    if (!(sendTimeVal > 5)) {
+      console.log("sendTimeVal error:" + sendTimeVal)
+      mypage.setData({ motto: "静止发送时间数据有误!" });
+      return;
+    }
+    if (isNaN(beaconMaskVal)) {
+      console.log("beaconMaskVal error:" + beaconMaskVal)
+      mypage.setData({ motto: "过滤掩码数据有误!" });
+      return;
+    }
+    if (isNaN(beaconValueVal)) {
+      console.log("beaconValueVal error:" + beaconValue)
+      mypage.setData({ motto: "过滤值数据有误!" });
+      return;
+    }
+    myProcess.configParameter2(locationId, sendIntVal, sendTimeVal, beaconMaskVal, beaconValueVal, function (msg){
       mypage.setMotto(msg)
     }, function (arr) {
       mypage.setData({ motto: "配置完成!" });
@@ -152,40 +116,57 @@ Page({
   },
  
   readParameter: function (e) {
-    console.log(e.detail.value);
-    console.log("readParameter");
-    myProcess.syncParameter("IR" +mypage.data.deviceId, function (msg) {
+    console.log("readParameter:" + locationId);
+    myProcess.syncParameter(locationId, function (msg) {
       mypage.setMotto(msg)
     },function(arr){
-      if(arr==null||arr.length!=19){
+      if(arr!=null&&arr.length==19){
+        var battery = ((arr[0] & 0xff) << 8) | (arr[1] & 0xff);
+        battery = battery / 1000;
+        var hardware = "V" + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString() + "." + (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString();
+        var loraSf = arr[6] & 0xff;
+        var sendInterval = arr[7] & 0xff;
+        var accThres = arr[8] & 0xff;
+        var sendTime = arr[10] & 0xff;
+        var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
+        var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
+        var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
+        mypage.setData({
+          sendIntervalstr: sendInterval+"秒",
+          sendTimestr: sendTime+"秒",
+          batterystr: battery+"V",
+          hardwarestr: hardware,
+          maskstr:"0x"+ beaconMask,
+          beaconstr: "0x"+ beaconValue,
+          motto: "读取完成!"
+        })
+      } else if(arr != null && arr.length == 23){
+        var battery = ((arr[0] & 0xff) << 8) | (arr[1] & 0xff);
+        battery = battery / 1000;
+        var hardware = "V" + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString() + "." + (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString();
+        var loraSf = arr[6] & 0xff;
+        var sendInterval = arr[7] & 0xff;
+        var accThres = arr[8] & 0xff;
+        var sendTime = arr[10] & 0xff;
+        var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
+        var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
+        var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
+        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) || ((arr[20] & 0xff) << 8) || (arr[19] & 0xff);
+        mypage.setData({
+          sendIntervalstr: sendInterval + "秒",
+          sendTimestr: sendTime + "秒",
+          batterystr: battery + "V",
+          hardwarestr: hardware,
+          maskstr: "0x" + beaconMask.toString(16),
+          beaconstr: "0x" + beaconValue.toString(16),
+          alarmstr: alarmNum+"次",
+          motto: "读取完成!"
+        })
+      }else{
         console.log("error arr length:" + arr.length);
         return;
       }
-      battery = ((arr[0] & 0xff) << 8) |(arr[1] & 0xff);
-      battery = battery/1000;
-      hardware = "V" + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString() + "." + (arr[4] & 0xff).toString()+"." + (arr[5] & 0xff).toString();
-      loraSf = arr[6] & 0xff;
-      sendInterval = arr[7] & 0xff;
-      accThres = arr[8] & 0xff;
-      sendTime = arr[10] & 0xff;
-      bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
-      beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
-      var sendIntervalIndex = mypage.getArrIndex(sendInterval, sendIntervalarr);
-      var bleScanIndex = mypage.getArrIndex(bleScan, bleScanarr);
-      var loraSfIndex = mypage.getArrIndex(loraSf, loraSfarr);
-      var accThresIndex = mypage.getArrIndex(accThres, accThresarr);
-      var sendTimeIndex = mypage.getArrIndex(sendTime, sendTimearr);
-      mypage.setData({ 
-        sendIntervalstr: sendIntervalIndex >= 0 ? sendIntervalstrarr[sendIntervalIndex] : "未知:" + sendInterval,
-        bleScanstr: bleScanIndex >= 0 ? bleScanstrarr[bleScanIndex] : "未知:" + bleScan,
-        loraSfstr: loraSfIndex >= 0 ? loraSfstrarr[loraSfIndex] : "未知:" + loraSf,
-        accThresstr: accThresIndex >= 0 ? accThresstrarr[accThresIndex] : "未知:" + accThres,
-        sendTimestr: sendTimeIndex >= 0 ? sendTimestrarr[sendTimeIndex] : "未知:" + sendTime,
-        batterystr: battery.toString(),
-        hardwarestr: hardware,
-        beaconstr: beaconMask==0?"不过滤":"过滤",
-        motto:"读取完成!"
-        })
+      
     }
     )
   },
