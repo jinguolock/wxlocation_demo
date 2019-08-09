@@ -37,7 +37,7 @@
         <image src="../../images/home_finance@2x.png" class="service-icon"></image>
         <text>锚点配置</text>
       </view>
-      <view class="items">
+      <view  bindtap="toxunjianCfg" class="items">
         <image src="../../images/home_logistical@2x.png" class="service-icon"></image>
         <text>巡检配置</text>
       </view>

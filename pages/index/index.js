@@ -65,8 +65,13 @@ Page({
     wx.switchTab({ url: "../location/location" })
   },
   toBeaconCfg: function () {
-    //wx.navigateTo({ url: "../mystationcfg/mystationcfg" })
-    wx.navigateTo({ url: "../mycfg/mycfg" })
+    wx.navigateTo({ url: "../beacon/beacon" })
+   // wx.navigateTo({ url: "../mycfg/mycfg" })
     
+  },
+  toxunjianCfg: function () {
+    //wx.navigateTo({ url: "../mybeaconcfg/mybeaconcfg" })
+     wx.navigateTo({ url: "../mycfg/mycfg" })
+
   }
 });

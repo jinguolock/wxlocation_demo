@@ -26,6 +26,16 @@
     <text class="open-text">信标过滤</text>
     <input name="filtervalue" bindblur="filterValueInputEvent" auto-focus placeholder="16进制过滤的值" />
     </view>
+    <view class="rowclass">
+    <text class="open-text">动静阈值</text>
+    <input name="thres" bindblur="thresValueInputEvent" auto-focus placeholder="2~30的整数" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">取消报警</text>
+    <button bindtap="autocancel"   class="open-button" type='primary'>自动</button>
+    <button bindtap="manulcancel"  class="open-button" type='primary'>手动</button>
+    <button bindtap="nocancel"  class="open-button" type='primary'>无取消</button>
+    </view>
   </view>
 
   <view class="find-list">
@@ -35,7 +45,7 @@
     <text class="pp-text">{{sendIntervalstr}}</text>
     </view>
     <view class="rowclass">
-    <text class="open-text">持续发送</text>
+    <text class="open-text">静止发送</text>
     <text class="pp-text">{{sendTimestr}}</text>
     </view>
     <view class="rowclass">
@@ -45,6 +55,14 @@
     <view class="rowclass">
     <text class="open-text">信标过滤</text>
     <text class="pp-text">{{beaconstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">动静阈值</text>
+    <text class="pp-text">{{thresstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">取消报警</text>
+    <text class="pp-text">{{cancelalarmstr}}</text>
     </view>
     <view class="rowclass">
     <text class="open-text">电池电量</text>

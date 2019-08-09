@@ -14,7 +14,8 @@ let blueApi = {
     write_id: "6E400002-B5A3-F393-E0A9-E50E24DCCA9E",
     notify_id: "6E400003-B5A3-F393-E0A9-E50E24DCCA9E",
     startTransfer:0,
-    currentLength:0
+    currentLength:0,
+    beacon_mj:""
   },
   getStationNames(){
     var re=new Array();
@@ -94,8 +95,47 @@ let blueApi = {
     timerId=setTimeout(function () {
     _this.stopSearch();
     _this.disconnect();
-    msgFunc && msgFunc("未连接门锁，蓝牙失败！");
+    msgFunc && msgFunc("未连接，蓝牙失败！");
     failFunc && failFunc();
+    }, 15000);
+  },
+  simpleSendBleMsgBeacon(beaconmj, content, crypt, command, timeout, isCloseFinish, reFunc, msgFunc, sendFinishFunc, failFunc) {
+    var _this = this;
+    clearTimeout(timerId);
+    _this.blue_data.beacon_mj = beaconmj;
+    _this.onOpenNotifyListener = (function () {
+      console.log("notify is ready")
+      clearTimeout(timerId);
+      _this.sendProtoHex(content, crypt, command);
+      sendFinishFunc && sendFinishFunc();
+      // setTimeout(function () {
+      //   _this.getCacheReturnContent()
+      //   reFunc && refunc(_this.getCacheReturnContent())
+      // },500);
+    })
+    _this.completeTransfer = (function (msg) {
+      if (isCloseFinish) {
+        _this.disconnect()
+      }
+      _this.blue_data.runFlag = 1
+      reFunc && reFunc(msg)
+    })
+    // _this.onNotifyListener = (function (msg) {
+    //   console.log(msg)
+    //   if (isCloseFinish){
+    //     _this.disconnect()
+    //     console.log("")
+    //   }
+    //   _this.runFlag = 1
+    //   successFunc && successFunc(msg)
+    // })
+    //
+    _this.connectBeacon();
+    timerId = setTimeout(function () {
+      _this.stopSearch();
+      _this.disconnect();
+      msgFunc && msgFunc("未连接，蓝牙失败！");
+      failFunc && failFunc();
     }, 15000);
   },
   searchBleDevices(pre) {
@@ -113,6 +153,21 @@ let blueApi = {
       }
     })
   },
+  searchBleDevicesMac(after) {
+    if (!wx.openBluetoothAdapter) {
+      this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
+      return;
+    }
+
+    var _this = this;
+    this.clearNameRssi()
+    wx.openBluetoothAdapter({
+      success: function (res) {
+        console.log("ble ready complete")
+        _this.startSearchBleMacs(after);
+      }
+    })
+  },
   connect() {
     if (!wx.openBluetoothAdapter) {
       this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
@@ -125,6 +180,20 @@ let blueApi = {
         console.log("ble ready complete")
         _this.startSearch();
        }
+    })
+  },
+  connectBeacon() {
+    if (!wx.openBluetoothAdapter) {
+      this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
+      return;
+    }
+
+    var _this = this;
+    wx.openBluetoothAdapter({
+      success: function (res) {
+        console.log("ble beacon ready complete")
+        _this.startSearchBeacon();
+      }
     })
   },
   //发送消息
@@ -341,6 +410,34 @@ let blueApi = {
       }
     })
   },
+  startSearchBleMacs(after) {
+    var _this = this;
+    stationMap = new Object();
+    wx.startBluetoothDevicesDiscovery({
+      services: [],
+      success(res) {
+        wx.onBluetoothDeviceFound(function (res) {
+         // console.log("device length:" + res.devices[0].name)
+          console.log("device rssi:" + res.devices[0].RSSI + ";device name:" + res.devices[0].name + ";device mac:" + res.devices[0].deviceId)
+          console.log("device uuid:" + _this.arrayBufferToHexString(res.devices[0].advertisData));
+          var mj = _this.getBeaconMajorMinor(res.devices[0].advertisData);
+          if(mj!=null){
+            console.log("get beacon  name:" + mj);
+            stationMap[mj] = res.devices[0].RSSI
+          }
+          //var device = _this.filterDevice(res.devices);
+          // if (res.devices[0].name.length > 0) {
+          //   var st = res.devices[0].name.substr(0, 2);
+          //   if (st == pre && res.devices[0].name.length == 10) {
+          //     console.log("get station  name:" + res.devices[0].name);
+          //     stationMap[res.devices[0].name] = res.devices[0].RSSI
+          //   }
+          // }
+
+        });
+      }
+    })
+  },
   startSearch() {
     var _this = this;
     wx.startBluetoothDevicesDiscovery({
@@ -356,6 +453,27 @@ let blueApi = {
             _this.connectDevice();
             _this.stopSearch();
             
+          }
+        });
+      }
+    })
+  },
+
+  startSearchBeacon() {
+    var _this = this;
+    wx.startBluetoothDevicesDiscovery({
+      services: [],
+      success(res) {
+        wx.onBluetoothDeviceFound(function (res) {
+          //console.log("device length:" + res.devices[0].name )
+          console.log("device adv:" + _this.arrayBufferToHexString(res.devices[0].advertisData))
+          //var device = _this.filterDevice(res.devices);
+          var mj = _this.getBeaconMajorMinor(res.devices[0].advertisData);
+          if (mj != null && mj == _this.blue_data.beacon_mj) {
+            console.log("get beacon  mj:" + mj);
+            _this.blue_data.device_id = res.devices[0].deviceId;
+            _this.connectDevice();
+            _this.stopSearch();
           }
         });
       }
@@ -510,6 +628,27 @@ let blueApi = {
       }
     }
 
+  },
+  getBeaconMajorMinor(buffer){
+    let bufferType = Object.prototype.toString.call(buffer)
+    if (buffer != '[object ArrayBuffer]') {
+      return
+    }
+    let dataView = new DataView(buffer)
+    if (dataView.byteLength!=25){
+      return
+    }
+    if (dataView.getUint8(0) != 0x59 || dataView.getUint8(1) != 0x00 || dataView.getUint8(2) != 0x02 || dataView.getUint8(3) != 0x15 ) {
+      return
+    }
+    //var str = dataView.getUint8(20);
+    var buffer2 = new ArrayBuffer(4);
+    let dataView2 = new DataView(buffer2);
+    dataView2.setUint8(0, dataView.getUint8(20));
+    dataView2.setUint8(1, dataView.getUint8(21));
+    dataView2.setUint8(2, dataView.getUint8(22));
+    dataView2.setUint8(3, dataView.getUint8(23));
+    return this.arrayBufferToHexString(buffer2);
   },
   arrayBufferToHexString(buffer) {
     let bufferType = Object.prototype.toString.call(buffer)

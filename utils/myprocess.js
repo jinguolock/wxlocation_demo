@@ -76,16 +76,17 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
-  configParameter2(deviceId, sendInterval, sendtime, beaconMask,beaconValue, msgFunc, reFunc) {
+  configParameter2(deviceId, sendInterval, sendtime, beaconMask,beaconValue,thresValue,alarmtype, msgFunc, reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
     // for(var i=0;i<4500;i++){
     //   content[i] = (i&0xff);
     // }
     var lorasf=12;
-    var accthres=28;
+    var accthres = thresValue;
     var blescan=160;
-    var content = new Uint8Array(13);
+    var alarmnumber=10;
+    var content = new Uint8Array(15);
     content[0] = lorasf & 0xff;
     content[1] = sendInterval & 0xff;
     content[2] = accthres & 0xff;
@@ -99,6 +100,8 @@ let myProcess = {
     content[10] = beaconMask & 0xff;
     content[11] = (beaconValue >> 8) & 0xff;
     content[12] = beaconValue & 0xff;
+    content[13] = alarmtype & 0xff;
+    content[14] = alarmnumber & 0xff;
     //content[11] = 0xC6;
     //content[12] = 0xB1;
     this.sendBleByAuth(deviceId, content, 0x31,

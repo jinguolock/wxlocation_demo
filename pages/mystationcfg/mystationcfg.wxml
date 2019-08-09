@@ -9,23 +9,23 @@
     <text class="tt-text">配置参数</text>
     <view class="rowclass">
     <text class="open-text">配置地址</text>
-    <input name="ip" bindblur="ipInputEvent" auto-focus placeholder="192.168.1.98" />
+    <input name="ip" bindblur="ipInputEvent" auto-focus placeholder="输入IP,如:192.168.1.98" />
     </view>
     <view class="rowclass">
     <text class="open-text">配置掩码</text>
-    <input name="mask" bindblur="maskInputEvent"   auto-focus placeholder="255.255.255.0" />
+    <input name="mask" bindblur="maskInputEvent"   auto-focus placeholder="输入掩码,如:255.255.255.0" />
     </view>
     <view class="rowclass">
     <text class="open-text">配置网关</text>
-    <input name="gateip" bindblur="gatewayInputEvent"   auto-focus placeholder="192.168.1.1" />
+    <input name="gateip" bindblur="gatewayInputEvent"   auto-focus placeholder="输入网关IP,如:192.168.1.1" />
     </view>
     <view class="rowclass">
     <text class="open-text">域名服务</text>
-    <input name="gateip" bindblur="dnsInputEvent"   auto-focus placeholder="192.168.1.1" />
+    <input name="gateip" bindblur="dnsInputEvent"   auto-focus placeholder="输入DNS IP,如:192.168.1.1" />
     </view>
     <view class="rowclass">
     <text class="open-text">指向地址</text>
-    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="0.0.0.0" />
+    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="输入指向IP,如:0.0.0.0" />
     </view>
     <view class="rowclass">
     <text class="open-text">静态地址</text>

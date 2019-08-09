@@ -112,6 +112,7 @@ Page({
     })
   },
   updateParameter: function (e) {
+    mypage.setData({ motto: "开始配置..." });
     if (!this.checkipRight(ipval)){
       this.setError("ip地址配置有误！")
       return
@@ -158,6 +159,7 @@ Page({
   },
  
   readParameter: function (e) {
+    mypage.setData({ motto: "开始读取..." });
     console.log(e.detail.value);
     console.log("readParameter");
     myProcess.syncParameter_station(mystationId, function (msg) {
@@ -201,7 +203,7 @@ Page({
       }
       var statusstr="";
       if(mystatus==1){
-        statusstr="1301初始化完成,网口无响应！";
+        statusstr="网口无响应,无法配置！";
       } else if (mystatus == 2) {
         statusstr = "网口芯片正常,获取地址失败！";
       } else if (mystatus == 3) {

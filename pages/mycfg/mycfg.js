@@ -10,7 +10,9 @@ var battery
 var hardware
 var beaconMask
 var beaconValue
-
+var thresValue
+var cancelValue
+var cancelAlarmValue=10
 Page({
   data: {
     deviceId: "",
@@ -21,6 +23,8 @@ Page({
     maskstr: "",
     alarmstr: "",
     beaconstr: "",
+    thresstr:"",
+    cancelalarmstr:"",
     motto:""
   },
   //事件处理函数
@@ -38,6 +42,18 @@ Page({
      
     }
     return -1;
+  },
+  autocancel: function (e) {
+    mypage.setData({ cancelalarmstr: "发送" + cancelAlarmValue + "次后取消" })
+    cancelValue = 2
+  },
+  manulcancel: function (e) {
+    mypage.setData({ cancelalarmstr: "连按5下取消" })
+    cancelValue = 1
+  },
+  nocancel: function (e) {
+    mypage.setData({ cancelalarmstr: "无法取消" })
+    cancelValue = 0
   },
   onShow: function () {
     //console.log("station onShow")
@@ -77,8 +93,11 @@ Page({
   filterValueInputEvent: function (e) {
     beaconValue = e.detail.value
   },
+  thresValueInputEvent: function (e) {
+    thresValue = e.detail.value
+  },
   updateParameter: function (e) {
-
+    mypage.setData({ motto: "开始配置..." });
     if (sendInterval == null || sendTime == null || beaconMask == null || beaconValue == null ){
       console.log("data error")
       mypage.setData({motto: "数据不完整!"});
@@ -88,6 +107,7 @@ Page({
     var sendTimeVal = parseInt(sendTime, 10);
     var beaconMaskVal = parseInt(beaconMask, 16);
     var beaconValueVal = parseInt(beaconValue, 16);
+    var thresValueVal = parseInt(thresValue, 10);
     if(!(sendIntVal>2)){
       console.log("sendIntVal error:" + sendIntVal)
       mypage.setData({ motto: "发送间隔数据有误!" });
@@ -108,7 +128,18 @@ Page({
       mypage.setData({ motto: "过滤值数据有误!" });
       return;
     }
-    myProcess.configParameter2(locationId, sendIntVal, sendTimeVal, beaconMaskVal, beaconValueVal, function (msg){
+    if (isNaN(thresValueVal)) {
+      console.log("beaconValueVal error:" + beaconValue)
+      mypage.setData({ motto: "动静数据有误!" });
+      return;
+    }
+    if (thresValueVal < 2 || thresValueVal>30) {
+      console.log("beaconValueVal error:" + beaconValue)
+      mypage.setData({ motto: "动静数据大小有误，2~30之间!" });
+      return;
+    }
+
+    myProcess.configParameter2(locationId, sendIntVal, sendTimeVal, beaconMaskVal, beaconValueVal, thresValueVal, cancelValue, function (msg){
       mypage.setMotto(msg)
     }, function (arr) {
       mypage.setData({ motto: "配置完成!" });
@@ -117,6 +148,7 @@ Page({
  
   readParameter: function (e) {
     console.log("readParameter:" + locationId);
+    mypage.setData({ motto: "开始读取..." });
     myProcess.syncParameter(locationId, function (msg) {
       mypage.setMotto(msg)
     },function(arr){
@@ -159,7 +191,44 @@ Page({
           hardwarestr: hardware,
           maskstr: "0x" + beaconMask.toString(16),
           beaconstr: "0x" + beaconValue.toString(16),
+          thresstr: "" + accThres,
           alarmstr: alarmNum+"次",
+          motto: "读取完成!"
+        })
+      } else if (arr != null && arr.length == 25) {
+        var battery = ((arr[0] & 0xff) << 8) | (arr[1] & 0xff);
+        battery = battery / 1000;
+        var hardware = "V" + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString() + "." + (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString();
+        var loraSf = arr[6] & 0xff;
+        var sendInterval = arr[7] & 0xff;
+        var accThres = arr[8] & 0xff;
+        var sendTime = arr[10] & 0xff;
+        var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
+        var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
+        var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
+        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) || ((arr[20] & 0xff) << 8) || (arr[19] & 0xff);
+
+        cancelValue = arr[23] & 0xff;
+        cancelAlarmValue = arr[24] & 0xff;
+        var alarmTypeStr="";
+        if (cancelValue==0){
+          alarmTypeStr="无法取消";
+        } else if (cancelValue == 1) {
+          alarmTypeStr = "连按5下取消";
+        } else if (cancelValue == 2) {
+          alarmTypeStr = "发送" + cancelAlarmValue+"次后取消";
+        } 
+
+        mypage.setData({
+          sendIntervalstr: sendInterval + "秒",
+          sendTimestr: sendTime + "秒",
+          batterystr: battery + "V",
+          hardwarestr: hardware,
+          maskstr: "0x" + beaconMask.toString(16),
+          beaconstr: "0x" + beaconValue.toString(16),
+          thresstr: "" + accThres,
+          alarmstr: alarmNum + "次",
+          cancelalarmstr: alarmTypeStr,
           motto: "读取完成!"
         })
       }else{
