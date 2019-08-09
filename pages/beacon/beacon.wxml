@@ -1,0 +1,13 @@
+<view class="container">
+
+  <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="items">
+  <view class="find-items">
+      <text >BEACON:{{items.deviceName}}</text>
+    </view>
+    
+    <view class="find-items">
+      <button data-aid="{{items}}" bindtap="tocfg" class="open-button" type='primary'>参数配置 </button>
+       <text  class="earnest-money">{{items.rssi}}</text>
+    </view>
+  </view>
+</view>

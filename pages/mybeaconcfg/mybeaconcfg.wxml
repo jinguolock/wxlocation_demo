@@ -1,0 +1,100 @@
+<view class="container">
+    <!--view class="logo">
+      <image src="../../images/logo.png"></image>
+    </view-->
+
+
+    
+  <view class="find-list">
+    <text class="tt-text">配置参数</text>
+    <view class="rowclass">
+    <text class="open-text">输入密码</text>
+    <input name="ip" bindblur="ipInputEvent" auto-focus placeholder="输入配置密码" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">MAJOR</text>
+    <input name="mask" bindblur="maskInputEvent"   auto-focus placeholder="十进制，如:1203" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">MINOR</text>
+    <input name="gateip" bindblur="gatewayInputEvent"   auto-focus placeholder="十进制，如:1926" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">UUID</text>
+    <input name="gateip" bindblur="dnsInputEvent"   auto-focus placeholder="输入16位BYTE,如:12,12,32……" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">RSSI</text>
+    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="RSSI较准,如:-32" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">发送功率</text>
+    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="发送功率 ,如:4,0,-4,-8,-16等" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">广播间隔</text>
+    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="毫秒，如200" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">修改密码</text>
+    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="8个数字，如12345678" />
+    </view>
+    <!--view class="rowclass">
+    <text class="open-text">协议类型</text>
+    <button bindtap="tcpsend"   class="open-button" type='primary'>TCP</button>
+    <button bindtap="udpsend"  class="open-button" type='primary'>UDP</button>
+    </view-->
+  </view>
+
+  <view class="find-list">
+    <text class="tt-text">当前或配置参数:{{deviceId}}</text>
+    <view class="rowclass">
+    <text class="open-text">MAJOR</text>
+    <text class="pp-text">{{ipstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">MINOR</text>
+    <text class="pp-text">{{maskstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">UUID</text>
+    <text class="pp-text">{{gatewaystr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">RSSI</text>
+    <text class="pp-text">{{dnsstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">发送功率</text>
+    <text class="pp-text">{{macstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">广播间隔</text>
+    <text class="pp-text">{{sendipstr}}</text>
+    </view>
+    <!-- <view class="rowclass">
+    <text class="open-text">协议类型</text>
+    <text class="pp-text">{{tcpstr}}</text>
+    </view> -->
+    <view class="rowclass">
+    <text class="open-text">当前状态</text>
+    <text class="pp-text">{{statusstr}}</text>
+    </view>
+    <!-- <view class="rowclass">
+    <text class="open-text">服务端口</text>
+    <text class="pp-text">{{serverportstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">本地端口</text>
+    <text class="pp-text">{{localportstr}}</text>
+    </view> -->
+  </view>
+
+  <view class="section">
+    <view class="rowclass">
+      <button style='margin-top: 10px;' bindtap="updateParameter"  class="login-btn" form-type="alarm">修改</button>
+      <button style='margin-top: 10px;' bindtap="readParameter"  class="login-btn" form-type="alarm">读取</button>
+    </view>
+  </view>
+  <text class="open-text">{{motto}}</text>
+</view>
