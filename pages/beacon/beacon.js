@@ -38,7 +38,7 @@ Page({
     console.log("location onShow")
     let that = this;
     mypage = this;
-    blueApi.searchBleDevicesMac("IR");
+    blueApi.searchBleDevices("IB");
     timeIndex = 0;
     intervalid = setInterval(mypage.mytimeout, 1000);
   },

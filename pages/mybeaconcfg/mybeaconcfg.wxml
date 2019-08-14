@@ -9,35 +9,31 @@
     <text class="tt-text">配置参数</text>
     <view class="rowclass">
     <text class="open-text">输入密码</text>
-    <input name="ip" bindblur="ipInputEvent" auto-focus placeholder="输入配置密码" />
+    <input name="ip" bindblur="pwdInputEvent" auto-focus placeholder="输入配置密码" />
     </view>
     <view class="rowclass">
     <text class="open-text">MAJOR</text>
-    <input name="mask" bindblur="maskInputEvent"   auto-focus placeholder="十进制，如:1203" />
+    <input name="mask" bindblur="majorInputEvent"   auto-focus placeholder="十进制，如:1203" />
     </view>
     <view class="rowclass">
     <text class="open-text">MINOR</text>
-    <input name="gateip" bindblur="gatewayInputEvent"   auto-focus placeholder="十进制，如:1926" />
+    <input name="gateip" bindblur="minorInputEvent"   auto-focus placeholder="十进制，如:1926" />
     </view>
     <view class="rowclass">
-    <text class="open-text">UUID</text>
-    <input name="gateip" bindblur="dnsInputEvent"   auto-focus placeholder="输入16位BYTE,如:12,12,32……" />
-    </view>
-    <view class="rowclass">
-    <text class="open-text">RSSI</text>
-    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="RSSI较准,如:-32" />
+    <text class="open-text">RSSI校准</text>
+    <input name="sendto" bindblur="rssiInputEvent"   auto-focus placeholder="RSSI较准,如:-32" />
     </view>
     <view class="rowclass">
     <text class="open-text">发送功率</text>
-    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="发送功率 ,如:4,0,-4,-8,-16等" />
+    <input name="sendto" bindblur="txInputEvent"   auto-focus placeholder="发送功率 ,如:4,0,-4,-8,-16等" />
     </view>
     <view class="rowclass">
     <text class="open-text">广播间隔</text>
-    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="毫秒，如200" />
+    <input name="sendto" bindblur="sendInputEvent"   auto-focus placeholder="毫秒，如200" />
     </view>
     <view class="rowclass">
     <text class="open-text">修改密码</text>
-    <input name="sendto" bindblur="sendtoInputEvent"   auto-focus placeholder="8个数字，如12345678" />
+    <input name="sendto" bindblur="setpwdInputEvent"   auto-focus placeholder="8个数字，如12345678" />
     </view>
     <!--view class="rowclass">
     <text class="open-text">协议类型</text>
@@ -50,35 +46,35 @@
     <text class="tt-text">当前或配置参数:{{deviceId}}</text>
     <view class="rowclass">
     <text class="open-text">MAJOR</text>
-    <text class="pp-text">{{ipstr}}</text>
+    <text class="pp-text">{{majorstr}}</text>
     </view>
     <view class="rowclass">
     <text class="open-text">MINOR</text>
-    <text class="pp-text">{{maskstr}}</text>
+    <text class="pp-text">{{minorstr}}</text>
     </view>
-    <view class="rowclass">
+    <!--view class="rowclass">
     <text class="open-text">UUID</text>
-    <text class="pp-text">{{gatewaystr}}</text>
-    </view>
+    <text class="pp-text">{{uuidstr}}</text>
+    </view-->
     <view class="rowclass">
-    <text class="open-text">RSSI</text>
-    <text class="pp-text">{{dnsstr}}</text>
+    <text class="open-text">RSSI校准</text>
+    <text class="pp-text">{{rssistr}}</text>
     </view>
     <view class="rowclass">
     <text class="open-text">发送功率</text>
-    <text class="pp-text">{{macstr}}</text>
+    <text class="pp-text">{{txstr}}</text>
     </view>
     <view class="rowclass">
     <text class="open-text">广播间隔</text>
-    <text class="pp-text">{{sendipstr}}</text>
+    <text class="pp-text">{{sendstr}}</text>
     </view>
     <!-- <view class="rowclass">
     <text class="open-text">协议类型</text>
     <text class="pp-text">{{tcpstr}}</text>
     </view> -->
     <view class="rowclass">
-    <text class="open-text">当前状态</text>
-    <text class="pp-text">{{statusstr}}</text>
+    <text class="open-text">当前电量</text>
+    <text class="pp-text">{{batterystr}}</text>
     </view>
     <!-- <view class="rowclass">
     <text class="open-text">服务端口</text>

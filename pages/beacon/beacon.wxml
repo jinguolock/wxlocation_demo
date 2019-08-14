@@ -6,7 +6,7 @@
     </view>
     
     <view class="find-items">
-      <button data-aid="{{items}}" bindtap="tocfg" class="open-button" type='primary'>参数配置 </button>
+      <button data-aid="{{items.deviceName}}" bindtap="tocfg" class="open-button" type='primary'>参数配置 </button>
        <text  class="earnest-money">{{items.rssi}}</text>
     </view>
   </view>

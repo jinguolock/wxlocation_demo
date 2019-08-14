@@ -70,8 +70,8 @@ Page({
     
   },
   toxunjianCfg: function () {
-    //wx.navigateTo({ url: "../mybeaconcfg/mybeaconcfg" })
-     wx.navigateTo({ url: "../mycfg/mycfg" })
+    wx.navigateTo({ url: "../mybeaconcfg/mybeaconcfg" })
+     //wx.navigateTo({ url: "../mycfg/mycfg" })
 
   }
 });

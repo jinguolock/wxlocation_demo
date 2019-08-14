@@ -48,6 +48,20 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
+    syncParameter_beacon(deviceId, msgFunc, reFunc) {
+    var _this = this;
+    // var content = new Uint8Array(4500);
+    // for(var i=0;i<4500;i++){
+    //   content[i] = (i&0xff);
+    // }
+    var content = new Uint8Array(1);
+    content[0] = 1;
+    this.sendBleByAuth(deviceId, content, 0x50,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
   configParameter(deviceId, sendInterval, blescan, lorasf, accthres, sendtime,beaconMask, msgFunc, reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
