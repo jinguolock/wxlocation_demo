@@ -108,12 +108,12 @@ Page({
     var beaconMaskVal = parseInt(beaconMask, 16);
     var beaconValueVal = parseInt(beaconValue, 16);
     var thresValueVal = parseInt(thresValue, 10);
-    if(!(sendIntVal>2)){
+    if(!(sendIntVal>1)){
       console.log("sendIntVal error:" + sendIntVal)
       mypage.setData({ motto: "发送间隔数据有误!" });
       return;
     }
-    if (!(sendTimeVal > 5)) {
+    if (!(sendTimeVal > 4)) {
       console.log("sendTimeVal error:" + sendTimeVal)
       mypage.setData({ motto: "静止发送时间数据有误!" });
       return;

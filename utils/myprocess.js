@@ -20,6 +20,23 @@ let myProcess = {
     }
     )
   },
+  sendBleByAuthPwd(deviceId,pwd, content, command, reFunc, msgFunc, sendFinishFunc, failFunc) {
+    var _this = this;
+    var willsendbyte;
+    var did = pwd;
+    console.log("get pwd :" + did);
+    myApi.webmain("location", "getpwd", { id: did }, function (obj) {
+      if (obj != null && obj.pwd != null) {
+        msgFunc && msgFunc("数据完成，准备操作……")
+        willsendbyte = _this.getHexByStr(obj.pwd);
+        //simpleSendBleMsg(deviceName,content,crypt,command,timeout,isCloseFinish,reFunc,msgFunc,failFunc)
+        blueApi.simpleSendBleMsg(deviceId, content, willsendbyte, command, 30000, true, reFunc, msgFunc, sendFinishFunc, failFunc)
+      }
+    }, function (err) {
+      msgFunc && msgFunc("准备数据失败，网络错误:" + err)
+    }
+    )
+  },
   syncParameter(deviceId,msgFunc,reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
@@ -48,7 +65,7 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
-    syncParameter_beacon(deviceId, msgFunc, reFunc) {
+  syncParameter_dtu(deviceId, msgFunc, reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
     // for(var i=0;i<4500;i++){
@@ -56,7 +73,21 @@ let myProcess = {
     // }
     var content = new Uint8Array(1);
     content[0] = 1;
-    this.sendBleByAuth(deviceId, content, 0x50,
+    this.sendBleByAuth(deviceId, content, 0x55,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
+    syncParameter_beacon(deviceId,pwd, msgFunc, reFunc) {
+    var _this = this;
+    // var content = new Uint8Array(4500);
+    // for(var i=0;i<4500;i++){
+    //   content[i] = (i&0xff);
+    // }
+    var content = new Uint8Array(1);
+    content[0] = 1;
+      this.sendBleByAuthPwd(deviceId, pwd,content, 0x50,
       function (msg) {
         console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
         reFunc && reFunc(msg);
@@ -169,6 +200,64 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
+  configParameter_dtu(deviceId, runmode, loramode, channel,sf, power, baud, sleep, support, ask, msgFunc, reFunc) {
+    var _this = this;
+    
+    var channelarr = _this.getHexByStr2(channel);
+    var askarr = _this.getHexByStrSpace(ask);
+    
+    sleep = sleep*1000;
+    var content = new Uint8Array(15 + askarr.length);
+    content[0] = sleep&0xff;
+    content[1] = (sleep>>8) & 0xff;
+    content[2] = (sleep >> 16) & 0xff;
+    content[3] = (sleep >> 24) & 0xff;
+    content[4] = channelarr[0];
+    content[5] = channelarr[1];
+    content[6] = channelarr[2];
+    content[7] = sf & 0xff;
+    content[8] = power & 0xff;
+    content[9] = loramode & 0xff;
+    content[10] = runmode & 0xff;
+    content[11] = baud & 0xff;
+    content[12] = support & 0xff;
+    content[13] = 1;
+    content[14] = askarr.length;
+    for (var i = 0; i < askarr.length;i++){
+      content[15 + i] = askarr[i];
+    }
+
+    this.sendBleByAuth(deviceId, content, 0x56,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
+  configParameter_beacon(deviceId,pwd, major, minor, rssi, send, tx, setpwdval, msgFunc, reFunc) {
+    var _this = this;
+    var content = new Uint8Array(14);
+    var pwdarr =_this.getHexByStr2(setpwdval);
+    var updateInterval=500;
+    content[0] = pwdarr[0];
+    content[1] = pwdarr[1];
+    content[2] = pwdarr[2];
+    content[3] = pwdarr[3];
+    content[4] = (major >> 8) & 0xff;
+    content[5] = major & 0xff;
+    content[6] = (minor >> 8) & 0xff;
+    content[7] = minor & 0xff;
+    content[8] = (send >> 8) & 0xff;
+    content[9] = send & 0xff;
+    content[10] = (updateInterval >> 8) & 0xff;
+    content[11] = updateInterval & 0xff;
+    content[12] = rssi & 0xff;
+    content[13] = tx & 0xff;
+    this.sendBleByAuthPwd(deviceId,pwd, content, 0x51,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
   getStrByHex(hexArr){
     var hexStr = '';
     for (var i = 0; i < hexArr.length; i++) {
@@ -195,6 +284,15 @@ let myProcess = {
   },
   getHexByStr(hexStr) {
     var strs = hexStr.split(",");
+    var re = new Uint8Array(strs.length);
+    for (var i = 0; i < strs.length; i++) {
+      re[i] = parseInt(strs[i], 16) & 0xff;
+    }
+
+    return re;
+  },
+  getHexByStrSpace(hexStr) {
+    var strs = hexStr.split(" ");
     var re = new Uint8Array(strs.length);
     for (var i = 0; i < strs.length; i++) {
       re[i] = parseInt(strs[i], 16) & 0xff;

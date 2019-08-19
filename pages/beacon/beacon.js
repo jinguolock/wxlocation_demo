@@ -85,7 +85,7 @@ Page({
     if (timeIndex >= 60) {
       timeIndex = 0;
       blueApi.stopSearch();
-      blueApi.searchBleDevices("IR");
+      blueApi.searchBleDevices("IB");
     }
   },
 

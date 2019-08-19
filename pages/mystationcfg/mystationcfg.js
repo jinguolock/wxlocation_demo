@@ -113,30 +113,52 @@ Page({
   },
   updateParameter: function (e) {
     mypage.setData({ motto: "开始配置..." });
-    if (!this.checkipRight(ipval)){
-      this.setError("ip地址配置有误！")
-      return
-    }
-    if (!this.checkipRight(maskval)) {
-      this.setError("地址掩码配置有误！")
-      return
-    }
-    if (!this.checkipRight(gatewayval)) {
-      this.setError("网关地址配置有误！")
-      return
-    }
-    if (!this.checkipRight(dnsval)) {
-      this.setError("dns配置有误！")
-      return
-    }
-    if (!this.checkipRight(sendtoval)) {
-      this.setError("指向地址配置有误！")
-      return
-    }
-    if (staticipval != 1 && staticipval!=2){
+    if (staticipval != 1 && staticipval != 2) {
       this.setError("没有选择是否DHCP！")
       return
     }
+    if (staticipval==1){
+      if (!this.checkipRight(ipval)) {
+        this.setError("ip地址配置有误！")
+        return
+      }
+      if (!this.checkipRight(maskval)) {
+        this.setError("地址掩码配置有误！")
+        return
+      }
+      if (!this.checkipRight(gatewayval)) {
+        this.setError("网关地址配置有误！")
+        return
+      }
+      if (!this.checkipRight(dnsval)) {
+        this.setError("dns配置有误！")
+        return
+      }
+      if (!this.checkipRight(sendtoval)) {
+        this.setError("指向地址配置有误！")
+        return
+      }
+    }
+    if (staticipval == 2) {
+      if (!this.checkipRight(ipval)) {
+        ipval = "192.168.1.98"
+      }
+      if (!this.checkipRight(maskval)) {
+        maskval = "255.255.255.0"
+      }
+      if (!this.checkipRight(gatewayval)) {
+        gatewayval = "192.168.1.1"
+      }
+      if (!this.checkipRight(dnsval)) {
+        dnsval = "192.168.1.1"
+      }
+      if (!this.checkipRight(sendtoval)) {
+        dnsval = "192.168.1.1"
+      }
+    }
+
+    
+    
     this.setError("开始配置");
 
     myProcess.configParameter_stationNet(mystationId, ipval, maskval, gatewayval, dnsval, sendtoval, staticipval, function (msg) {

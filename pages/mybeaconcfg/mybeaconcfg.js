@@ -56,8 +56,13 @@ Page({
    // intervalid = setInterval(mypage.mytimeout, 1000);
     beaconId = wx.getStorageSync('configBeaconId')
     console.log("my beaconId:" + beaconId)
-    pwdval = beaconId
-    setpwdval = pwdval
+    if (pwdval==null||pwdval.length==0){
+      pwdval = beaconId.substr(2);
+    }
+    if (setpwdval == null || setpwdval.length == 0) {
+      setpwdval = pwdval
+    }
+    
     mypage.setData({
       deviceId: beaconId
      })
@@ -140,6 +145,13 @@ Page({
       mypage.setData({ motto: "发送功率数据有误!" });
       return;
     }
+    if (pwdval.length != 8 || setpwdval.length!=8){
+      console.log("pwdval or setpwdval error:" + pwdval + ";" + setpwdval)
+      mypage.setData({ motto: "密码或设置数据有误!" });
+      return;
+    }
+    console.log("or rssi:" + rssi);
+    console.log("or tx:" + tx);
     rssi = mypage.int2uint(rssi);
     tx=mypage.int2uint(tx);
     console.log("major:" + major);
@@ -150,12 +162,16 @@ Page({
     console.log("pwdval:" + pwdval);
     console.log("setpwdval:" + setpwdval);
     this.setError("开始配置");
-
-    myProcess.configParameter_stationNet(mystationId, ipval, maskval, gatewayval, dnsval, sendtoval, staticipval, function (msg) {
+    myProcess.configParameter_beacon(beaconId,pwdval, major, minor, rssi, send, tx, setpwdval, function (msg) {
       mypage.setMotto(msg)
     }, function (arr) {
       mypage.setData({ motto: "配置完成!" });
     }) 
+    // myProcess.configParameter_stationNet(mystationId, ipval, maskval, gatewayval, dnsval, sendtoval, staticipval, function (msg) {
+    //   mypage.setMotto(msg)
+    // }, function (arr) {
+    //   mypage.setData({ motto: "配置完成!" });
+    // }) 
 
 
     // if (sendInterval == null || bleScan == null || loraSf == null || accThres == null || sendTime==null){
@@ -183,10 +199,15 @@ Page({
     return num;
   },
   readParameter: function (e) {
+    if (pwdval.length != 8 ) {
+      console.log("pwdval error:" + pwdval)
+      mypage.setData({ motto: "密码数据有误!" });
+      return;
+    }
     mypage.setData({ motto: "开始读取..." });
     console.log(e.detail.value);
     console.log("readParameter");
-    myProcess.syncParameter_beacon(beaconId, function (msg) {
+    myProcess.syncParameter_beacon(beaconId,pwdval, function (msg) {
       mypage.setMotto(msg)
     },function(arr){
       console.log(arr);
@@ -222,11 +243,11 @@ Page({
         majorstr: major+"",
         minorstr: minor+"",
         uuidstr: uuid,
-        rssistr: rssi_level+"",
-        txstr: tx_power+"",
-        sendstr: sendInterval+"",
-        batterystr: battery+"",
-        hardwarestr: hardware+"",
+        rssistr: rssi_level+"DBm",
+        txstr: tx_power+"DBm",
+        sendstr: sendInterval+"毫秒",
+        batterystr: battery+"V",
+        hardwarestr: "V"+hardware,
         motto:"读取完成!"
         })
     }

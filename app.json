@@ -7,6 +7,8 @@
     "pages/mystationcfg/mystationcfg",
     "pages/mybeaconcfg/mybeaconcfg",
     "pages/mycfg/mycfg",
+    "pages/mydtucfg/mydtucfg",
+    "pages/dtu/dtu",
     "pages/user/user",
     "pages/login/login",
     "pages/register/register"

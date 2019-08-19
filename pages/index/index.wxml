@@ -37,10 +37,12 @@
         <image src="../../images/home_finance@2x.png" class="service-icon"></image>
         <text>锚点配置</text>
       </view>
-      <view  bindtap="toxunjianCfg" class="items">
+      <view  bindtap="todtuCfg" class="items">
         <image src="../../images/home_logistical@2x.png" class="service-icon"></image>
-        <text>巡检配置</text>
+        <text>DTU配置</text>
       </view>
+      
     </view>
+    
   </view>
 </view>

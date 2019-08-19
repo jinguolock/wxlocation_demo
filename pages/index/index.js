@@ -69,8 +69,9 @@ Page({
    // wx.navigateTo({ url: "../mycfg/mycfg" })
     
   },
-  toxunjianCfg: function () {
-    wx.navigateTo({ url: "../mybeaconcfg/mybeaconcfg" })
+  todtuCfg: function () {
+   // wx.navigateTo({ url: "../mydtucfg/mydtucfg" })
+    wx.navigateTo({ url: "../dtu/dtu" })
      //wx.navigateTo({ url: "../mycfg/mycfg" })
 
   }
