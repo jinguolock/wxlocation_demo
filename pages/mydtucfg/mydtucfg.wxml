@@ -1,0 +1,134 @@
+<view class="container">
+    <!--view class="logo">
+      <image src="../../images/logo.png"></image>
+    </view-->
+
+
+    
+  <view class="find-list">
+    <text class="tt-text">配置参数</text>
+    <view class="rowclass">
+    <text class="open-text">运行模式</text>
+    <button bindtap="btn_runmode_low"  class="open-button3" type='primary'>低功耗模式</button>
+    <button bindtap="btn_runmode_transfer"  class="open-button3" type='primary'>透传模式</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">发射模式</text>
+    <button bindtap="btn_loramode_1278"  class="open-button3" type='primary'>定频模式</button>
+    <button bindtap="btn_loramode_1301"  class="open-button3" type='primary'>变频模式</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">信道</text>
+    <button bindtap="btn_channel1"  class="open-button2" type='primary'>1</button>
+    <button bindtap="btn_channel2"  class="open-button2" type='primary'>2</button>
+    <button bindtap="btn_channel3"  class="open-button2" type='primary'>3</button>
+    <button bindtap="btn_channel4"  class="open-button2" type='primary'>4</button>
+    <button bindtap="btn_channel5"  class="open-button2" type='primary'>5</button>
+    <button bindtap="btn_channel6"  class="open-button2" type='primary'>6</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">扩频</text>
+    <button bindtap="btn_sf7"  class="open-button2" type='primary'>7</button>
+    <button bindtap="btn_sf8"  class="open-button2" type='primary'>8</button>
+    <button bindtap="btn_sf9"  class="open-button2" type='primary'>9</button>
+    <button bindtap="btn_sf10"  class="open-button2" type='primary'>10</button>
+    <button bindtap="btn_sf11"  class="open-button2" type='primary'>11</button>
+    <button bindtap="btn_sf12"  class="open-button2" type='primary'>12</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">发射功率</text>
+    <input name="power" bindblur="powerInputEvent"   auto-focus placeholder="1~17的整数,如:15" />
+    </view>
+    
+    <view class="rowclass">
+    <text class="open-text">波特率</text>
+    <input name="baud" bindblur="baudInputEvent"   auto-focus placeholder="标准波特率值,如:9600" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">休眠时间</text>
+    <input name="sendto" bindblur="sleepInputEvent"   auto-focus placeholder="休眠秒数,如：60" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">供电时长</text>
+    <input name="sendto" bindblur="supportInputEvent"   auto-focus placeholder="供电秒数，如：2" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">轮询字符</text>
+    <input name="sendto" bindblur="askInputEvent"   auto-focus placeholder="空格分开的16进制串" />
+    </view>
+    <!--view class="rowclass">
+    <text class="open-text">协议类型</text>
+    <button bindtap="tcpsend"   class="open-button" type='primary'>TCP</button>
+    <button bindtap="udpsend"  class="open-button" type='primary'>UDP</button>
+    </view-->
+  </view>
+
+  <view class="find-list">
+    <text class="tt-text">当前或配置参数:{{deviceId}}</text>
+    <view class="rowclass">
+    <text class="open-text">运行模式</text>
+    <text class="pp-text">{{runmodestr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">发射模式</text>
+    <text class="pp-text">{{loramodestr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">射频信道</text>
+    <text class="pp-text">{{channelstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">扩频因子</text>
+    <text class="pp-text">{{sfstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">发送功率</text>
+    <text class="pp-text">{{powerstr}}</text>
+    </view>
+    
+    <!-- <view class="rowclass">
+    <text class="open-text">协议类型</text>
+    <text class="pp-text">{{tcpstr}}</text>
+    </view> -->
+    <view class="rowclass">
+    <text class="open-text">波特率</text>
+    <text class="pp-text">{{baudstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">休眠时间</text>
+    <text class="pp-text">{{sleepstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">供电时长</text>
+    <text class="pp-text">{{supportstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">轮询字符</text>
+    <text class="pp-text">{{askstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">固件版本</text>
+    <text class="pp-text">{{hardwarestr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">当前电量</text>
+    <text class="pp-text">{{batterystr}}</text>
+    </view>
+    <!-- <view class="rowclass">
+    <text class="open-text">服务端口</text>
+    <text class="pp-text">{{serverportstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">本地端口</text>
+    <text class="pp-text">{{localportstr}}</text>
+    </view> -->
+  </view>
+
+  <view class="section">
+    <view class="rowclass">
+      <button style='margin-top: 10px;' bindtap="updateParameter"  class="login-btn" form-type="alarm">修改</button>
+      <button style='margin-top: 10px;' bindtap="readParameter"  class="login-btn" form-type="alarm">读取</button>
+    </view>
+  </view>
+  <text class="open-text">{{motto}}</text>
+</view>
