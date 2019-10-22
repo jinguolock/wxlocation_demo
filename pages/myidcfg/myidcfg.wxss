@@ -1,0 +1,82 @@
+.container {
+  height: 100%;
+}
+.logo{
+  border-top: 1px #f2f2f2 solid;
+  padding: 100px 0;
+  text-align: center;
+}
+.logo image{
+  width: 280rpx;
+  height: 85rpx;
+}
+.find-list{
+  background: #fff; 
+  margin-top: 2rpx;
+  width: 100%; 
+  /*border-top: 1px #f1f1f1 solid;*/
+  /*border-bottom: 1px #c2c2c2 solid;*/
+}
+.rowclass{
+  flex-direction: row;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  margin-bottom: 15rpx;
+  position: relative;
+}
+.login-txt{
+  background: #fff2e9;
+  font-size: 24rpx;
+  text-align: center;
+  color:#333;
+  padding: 15rpx;
+  margin-bottom: 5rpx;
+}
+.login-btn{
+  background: #003D79;
+  border: 0;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 15rpx;
+  margin: 100rpx 20rpx 20rpx 20rpx;
+  width: 150rpx;
+}
+.forget-reg{
+  font-size: 24rpx;
+  color: #ec6238;
+  margin: 0 30rpx;
+}
+.reg{
+  float: right;
+}
+.open-button{
+  font-size: 25rpx;
+  margin-left: 20rpx;
+  width: 140rpx;
+}
+.open-button2{
+  font-size: 25rpx;
+  margin-left: 20rpx;
+  width: 85rpx;
+}
+.open-button3{
+  font-size: 25rpx;
+  margin-left: 20rpx;
+  width: 180rpx;
+}
+.con-button{
+  font-size: 25rpx;
+  width: 150rpx;
+}
+.open-text{
+  margin-right: 50rpx;
+}
+.tt-text{
+  margin-right: 50rpx;
+  color: #0080FF;
+}
+.pp-text{
+  margin-right: 50rpx;
+  color: #058a05;
+}

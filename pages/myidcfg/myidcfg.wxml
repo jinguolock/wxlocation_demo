@@ -1,0 +1,28 @@
+<view class="container">
+    <!--view class="logo">
+      <image src="../../images/logo.png"></image>
+    </view-->
+
+
+    
+  <view class="find-list">
+    <text class="tt-text">配置参数</text>
+    <view class="rowclass">
+    <text class="open-text">设备ID</text>
+    <input name="sendto" bindinput="idInputEvent" placeholder="8位数字ID" />
+    </view>
+    <!--view class="rowclass">
+    <text class="open-text">协议类型</text>
+    <button bindtap="tcpsend"   class="open-button" type='primary'>TCP</button>
+    <button bindtap="udpsend"  class="open-button" type='primary'>UDP</button>
+    </view-->
+  </view>
+
+
+  <view class="section">
+    <view class="rowclass">
+      <button style='margin-top: 10px;' bindtap="IDConfigHandler"  class="login-btn" form-type="alarm">ID修改</button>
+    </view>
+  </view>
+  <text class="open-text">{{motto}}</text>
+</view>
