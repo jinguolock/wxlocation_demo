@@ -6,6 +6,7 @@ var char_rx = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 var myNusDataCache = new Uint8Array(8000);
 var myNusDataCache_length = 0;
 var stationMap=new Object();
+var batteryMap=new Object();
 var timerId;
 let blueApi = {
   blue_data: {
@@ -30,6 +31,7 @@ let blueApi = {
       var o=new Object();
       o.deviceName=i;
       o.rssi = stationMap[i];
+      o.battery=batteryMap[i];
       re.push(o);
     }
     return re;
@@ -150,6 +152,36 @@ let blueApi = {
       success: function (res) {
         console.log("ble ready complete")
         _this.startSearchBleNames(pre);
+      }
+    })
+  },
+  searchBleDevices2(pre1,pre2) {
+    if (!wx.openBluetoothAdapter) {
+      this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
+      return;
+    }
+
+    var _this = this;
+    this.clearNameRssi()
+    wx.openBluetoothAdapter({
+      success: function (res) {
+        console.log("ble ready complete")
+        _this.startSearchBleNames2(pre1,pre2);
+      }
+    })
+  },
+  searchBleDevicesAll() {
+    if (!wx.openBluetoothAdapter) {
+      this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
+      return;
+    }
+
+    var _this = this;
+    this.clearNameRssi()
+    wx.openBluetoothAdapter({
+      success: function (res) {
+        console.log("ble ready complete")
+        _this.startSearchBleNamesAll();
       }
     })
   },
@@ -410,6 +442,53 @@ let blueApi = {
       }
     })
   },
+  startSearchBleNames2(pre1,pre2) {
+    var _this = this;
+    stationMap = new Object();
+    batteryMap=new Object();
+    wx.startBluetoothDevicesDiscovery({
+      services: [],
+      success(res) {
+        wx.onBluetoothDeviceFound(function (res) {
+          console.log("device length:" + res.devices[0].name)
+          //console.log("device length:" + res.devices.length + "device name:" + res.devices[0].name + ";device mac:" + res.devices[0].deviceId)
+          //var device = _this.filterDevice(res.devices);
+          if (res.devices[0].name.length > 0) {
+            var st = res.devices[0].name.substr(0, 2);
+            if ((st == pre1||st==pre2) && res.devices[0].name.length == 10) {
+              console.log("get station  name:" + res.devices[0].name);
+
+              stationMap[res.devices[0].name] = res.devices[0].RSSI
+              batteryMap[res.devices[0].name] = _this.getBeaconUUIDBattery(res.devices[0].advertisData)
+            }
+          }
+
+        });
+      }
+    })
+  },
+  startSearchBleNamesAll() {
+    var _this = this;
+    stationMap = new Object();
+    wx.startBluetoothDevicesDiscovery({
+      services: [],
+      success(res) {
+        wx.onBluetoothDeviceFound(function (res) {
+          console.log("device length:" + res.devices[0].name)
+          //console.log("device length:" + res.devices.length + "device name:" + res.devices[0].name + ";device mac:" + res.devices[0].deviceId)
+          //var device = _this.filterDevice(res.devices);
+          if (res.devices[0].name.length > 0) {
+            var st = res.devices[0].name.substr(0, 1);
+            if ((st == "I") && res.devices[0].name.length == 10) {
+              console.log("get station  name:" + res.devices[0].name);
+              stationMap[res.devices[0].name] = res.devices[0].RSSI
+            }
+          }
+
+        });
+      }
+    })
+  },
   startSearchBleMacs(after) {
     var _this = this;
     stationMap = new Object();
@@ -649,6 +728,23 @@ let blueApi = {
     dataView2.setUint8(2, dataView.getUint8(22));
     dataView2.setUint8(3, dataView.getUint8(23));
     return this.arrayBufferToHexString(buffer2);
+  },
+  getBeaconUUIDBattery(buffer) {
+    let bufferType = Object.prototype.toString.call(buffer)
+    if (buffer != '[object ArrayBuffer]') {
+      return
+    }
+    let dataView = new DataView(buffer)
+    if (dataView.byteLength != 25) {
+      return
+    }
+    if (dataView.getUint8(2) != 0x02 || dataView.getUint8(3) != 0x15) {
+      return
+    }
+    var h = Number(dataView.getUint8(4));
+    var l = Number(dataView.getUint8(5));
+    var bat = (h << 8) | l;
+    return bat/1000;
   },
   arrayBufferToHexString(buffer) {
     let bufferType = Object.prototype.toString.call(buffer)

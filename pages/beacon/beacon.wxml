@@ -1,5 +1,10 @@
 <view class="container">
-
+<view class="find-list">
+  <view class="rowclass">
+    <text class="open-text">ID过滤</text>
+    <input name="id_filter" bindinput="idFilterInputEvent"   auto-focus placeholder="输入ID" />
+    </view>
+</view>
   <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="items">
   <view class="find-items">
       <text >BEACON:{{items.deviceName}}</text>
@@ -7,7 +12,7 @@
     
     <view class="find-items">
       <button data-aid="{{items.deviceName}}" bindtap="tocfg" class="open-button" type='primary'>参数配置 </button>
-       <text  class="earnest-money">{{items.rssi}}</text>
+       <text  class="earnest-money">信号：{{items.rssi}} 电量：{{items.battery}}V</text>
     </view>
   </view>
 </view>

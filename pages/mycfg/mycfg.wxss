@@ -39,8 +39,8 @@
   color: #fff;
   font-size: 24rpx;
   padding: 15rpx;
-  margin: 100rpx 20rpx 20rpx 20rpx;
-  width: 150rpx;
+  margin: 100rpx 10rpx 10rpx 10rpx;
+  width: 120rpx;
 }
 .forget-reg{
   font-size: 24rpx;

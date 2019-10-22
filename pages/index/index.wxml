@@ -27,7 +27,7 @@
     <view class="list">
       <view class="items">
         <image bindtap="toStationCfg" src="../../images/home_car_source@2x.png" class="service-icon"></image>
-        <text>基站配置</text>
+        <text>基站网络配置</text>
       </view>
       <view bindtap="toLocationCfg" class="items">
         <image src="../../images/home_headlines@2x.png" class="service-icon"></image>
@@ -40,6 +40,24 @@
       <view  bindtap="todtuCfg" class="items">
         <image src="../../images/home_logistical@2x.png" class="service-icon"></image>
         <text>DTU配置</text>
+      </view>
+      
+    </view>
+    <view class="list" style="padding:30px 0px 0px 0px">
+    <view bindtap="toIdCfg" class="items">
+        <image src="../../images/desk_order@2x.png" class="service-icon"></image>
+        <text>ID修改</text>
+      </view>
+      <view class="items">
+        <image bindtap="tostationAdvCfg" src="../../images/desk_publish@2x.png" class="service-icon"></image>
+        <text>基站配置</text>
+      </view>
+      
+      <view bindtap="" class="items">
+        
+      </view>
+      <view  bindtap="" class="items">
+        
       </view>
       
     </view>

@@ -9,31 +9,31 @@
     <text class="tt-text">配置参数</text>
     <view class="rowclass">
     <text class="open-text">输入密码</text>
-    <input name="ip" bindblur="pwdInputEvent" auto-focus placeholder="输入配置密码" />
+    <input name="ip" bindinput="pwdInputEvent"  placeholder="输入配置密码" />
     </view>
     <view class="rowclass">
     <text class="open-text">MAJOR</text>
-    <input name="mask" bindblur="majorInputEvent"   auto-focus placeholder="十进制，如:1203" />
+    <input name="mask" bindinput="majorInputEvent"    placeholder="十进制，如:1203" />
     </view>
     <view class="rowclass">
     <text class="open-text">MINOR</text>
-    <input name="gateip" bindblur="minorInputEvent"   auto-focus placeholder="十进制，如:1926" />
+    <input name="gateip" bindinput="minorInputEvent"    placeholder="十进制，如:1926" />
     </view>
     <view class="rowclass">
     <text class="open-text">RSSI校准</text>
-    <input name="sendto" bindblur="rssiInputEvent"   auto-focus placeholder="RSSI较准,如:-32" />
+    <input name="sendto" bindinput="rssiInputEvent"    placeholder="RSSI较准,如:-32" />
     </view>
     <view class="rowclass">
     <text class="open-text">发送功率</text>
-    <input name="sendto" bindblur="txInputEvent"   auto-focus placeholder="发送功率 ,如:4,0,-4,-8,-16等" />
+    <input name="sendto" bindinput="txInputEvent"    placeholder="发送功率 ,如:4,0,-4,-8,-16等" />
     </view>
     <view class="rowclass">
     <text class="open-text">广播间隔</text>
-    <input name="sendto" bindblur="sendInputEvent"   auto-focus placeholder="毫秒，如200" />
+    <input name="sendto" bindinput="sendInputEvent"    placeholder="毫秒，如200" />
     </view>
     <view class="rowclass">
     <text class="open-text">修改密码</text>
-    <input name="sendto" bindblur="setpwdInputEvent"   auto-focus placeholder="8个数字，如12345678" />
+    <input name="sendto" bindinput="setpwdInputEvent"    placeholder="8个数字，如12345678" />
     </view>
     <!--view class="rowclass">
     <text class="open-text">协议类型</text>

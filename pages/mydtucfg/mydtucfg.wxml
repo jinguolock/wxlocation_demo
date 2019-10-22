@@ -37,24 +37,28 @@
     </view>
     <view class="rowclass">
     <text class="open-text">发射功率</text>
-    <input name="power" bindblur="powerInputEvent"   auto-focus placeholder="1~17的整数,如:15" />
+    <input name="power" bindinput="powerInputEvent"    placeholder="1~17的整数,如:15" />
     </view>
     
     <view class="rowclass">
     <text class="open-text">波特率</text>
-    <input name="baud" bindblur="baudInputEvent"   auto-focus placeholder="标准波特率值,如:9600" />
+    <input name="baud" bindinput="baudInputEvent"    placeholder="标准波特率值,如:9600" />
     </view>
     <view class="rowclass">
     <text class="open-text">休眠时间</text>
-    <input name="sendto" bindblur="sleepInputEvent"   auto-focus placeholder="休眠秒数,如：60" />
+    <input name="sendto" bindinput="sleepInputEvent"    placeholder="休眠秒数,如：60" />
     </view>
     <view class="rowclass">
     <text class="open-text">供电时长</text>
-    <input name="sendto" bindblur="supportInputEvent"   auto-focus placeholder="供电秒数，如：2" />
+    <input name="sendto" bindinput="supportInputEvent"    placeholder="供电秒数，如：2" />
     </view>
     <view class="rowclass">
     <text class="open-text">轮询字符</text>
-    <input name="sendto" bindblur="askInputEvent"   auto-focus placeholder="空格分开的16进制串" />
+    <input name="sendto" bindinput="askInputEvent"    placeholder="空格分开的16进制串" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">设备ID</text>
+    <input name="sendto" bindinput="idInputEvent"    placeholder="8位数字ID" />
     </view>
     <!--view class="rowclass">
     <text class="open-text">协议类型</text>
@@ -128,6 +132,7 @@
     <view class="rowclass">
       <button style='margin-top: 10px;' bindtap="updateParameter"  class="login-btn" form-type="alarm">修改</button>
       <button style='margin-top: 10px;' bindtap="readParameter"  class="login-btn" form-type="alarm">读取</button>
+      <button style='margin-top: 10px;' bindtap="IDConfigHandler"  class="login-btn" form-type="alarm">ID修改</button>
     </view>
   </view>
   <text class="open-text">{{motto}}</text>

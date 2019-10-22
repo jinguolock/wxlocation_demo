@@ -56,3 +56,15 @@
   font-size: 25rpx;
   margin-left: 2rpx;
 }
+.rowclass{
+  flex-direction: row;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  margin-bottom: 15rpx;
+  position: relative;
+}
+.open-text{
+  margin-right: 50rpx;
+  margin-top: 5rpx;
+}

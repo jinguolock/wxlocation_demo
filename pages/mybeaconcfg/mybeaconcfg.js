@@ -245,7 +245,7 @@ Page({
         uuidstr: uuid,
         rssistr: rssi_level+"DBm",
         txstr: tx_power+"DBm",
-        sendstr: sendInterval+"毫秒",
+        sendstr: adv_time+"毫秒",
         batterystr: battery+"V",
         hardwarestr: "V"+hardware,
         motto:"读取完成!"

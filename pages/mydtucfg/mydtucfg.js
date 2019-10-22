@@ -15,6 +15,7 @@ var baudval = 0
 var sleepval = 1
 var supportval=0
 var askval = ""
+var idval=""
 var mystationId
 //0x78, 0x26, 0x66, 0x78, 0x33, 0x33, 0x78, 0x40, 0x00, 0x78, 0x4c, 0xcc, 0x78, 0x59, 0x99, 0x78, 0x66, 0x66, 0x78, 0x73, 0x33, 0x78, 0x80, 0x00
 var freStrarr = ["782666", "783333", "784000", "784CCC", "785999", "786666", "787333", "788000"]
@@ -60,7 +61,7 @@ Page({
    // intervalid = setInterval(mypage.mytimeout, 1000);
     dtuId = wx.getStorageSync('configDtuId')
     console.log("my dtuId:" + dtuId)
-    
+    idval = dtuId.substr(2);
     
     mypage.setData({
       deviceId: dtuId
@@ -155,7 +156,9 @@ Page({
   askInputEvent: function (e) {
     askval = e.detail.value
   },
-  
+  idInputEvent: function (e) {
+    idval = e.detail.value
+  },
   
   setError:function (msg){
     mypage.setData({
@@ -325,6 +328,36 @@ Page({
         })
     }
     )
+  },
+
+
+  IDConfigHandler: function (e) {
+
+
+    
+    if (idval.length != 8) {
+      mypage.setData({ motto: "ID字符数据有误!" });
+      return;
+    }
+
+    console.log("idval:" + idval);
+    
+    this.setError("开始配置");
+    // var runmodeval = 0
+    // var loramodeval = 0
+    // var channelval = 0
+    // var sfval = ""
+    // var powerval = 0
+    // var baudval = 0
+    // var sleepval = 1
+    // var supportval = 0
+    // var askval = ""
+    //configParameter_dtu(deviceId, runmode, loramode, channel, sf, power, baud, sleep, support, ask, msgFunc, reFunc)
+    myProcess.configParameter_dtuID(dtuId, idval, function (msg) {
+      mypage.setMotto(msg)
+    }, function (arr) {
+      mypage.setData({ motto: "配置完成!" });
+    })
   },
 
 })

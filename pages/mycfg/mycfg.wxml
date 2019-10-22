@@ -9,32 +9,41 @@
     <text class="tt-text">配置参数</text>
     <view class="rowclass">
     <text class="open-text">发送间隔</text>
-    <input name="sendInterval" bindblur="sendIntervalInputEvent" auto-focus placeholder="单位：秒" />
+    <input name="sendInterval" bindinput="sendIntervalInputEvent"  placeholder="单位：秒" />
     </view>
    
     <view class="rowclass">
     <text class="open-text">静止发送</text>
-    <input name="sendtime" bindblur="sendTimeInputEvent" auto-focus placeholder="单位：秒" />
+    <input name="sendtime" bindinput="sendTimeInputEvent"  placeholder="单位：秒" />
     </view>
 
     <view class="rowclass">
     <text class="open-text">过滤掩码</text>
-    <input name="filtermask" bindblur="filterMaskInputEvent" auto-focus placeholder="16进制掩码" />
+    <input name="filtermask" bindinput="filterMaskInputEvent"  placeholder="16进制掩码" />
     </view>
 
     <view class="rowclass">
     <text class="open-text">信标过滤</text>
-    <input name="filtervalue" bindblur="filterValueInputEvent" auto-focus placeholder="16进制过滤的值" />
+    <input name="filtervalue" bindinput="filterValueInputEvent"  placeholder="16进制过滤的值" />
     </view>
     <view class="rowclass">
     <text class="open-text">动静阈值</text>
-    <input name="thres" bindblur="thresValueInputEvent" auto-focus placeholder="2~30的整数" />
+    <input name="thres" bindinput="thresValueInputEvent"  placeholder="2~30的整数" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">广播间隔</text>
+    <input name="thres" bindinput="advIntervalInputEvent"  placeholder="20以上的毫秒数" />
     </view>
     <view class="rowclass">
     <text class="open-text">取消报警</text>
     <button bindtap="autocancel"   class="open-button" type='primary'>自动</button>
     <button bindtap="manulcancel"  class="open-button" type='primary'>手动</button>
     <button bindtap="nocancel"  class="open-button" type='primary'>无取消</button>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">LORA发射</text>
+    <button bindtap="loradisable"   class="open-button" type='primary'>禁用</button>
+    <button bindtap="loraenable"  class="open-button" type='primary'>启用</button>
     </view>
   </view>
 
@@ -61,8 +70,16 @@
     <text class="pp-text">{{thresstr}}</text>
     </view>
     <view class="rowclass">
+    <text class="open-text">广播间隔</text>
+    <text class="pp-text">{{advIntervalstr}}</text>
+    </view>
+    <view class="rowclass">
     <text class="open-text">取消报警</text>
     <text class="pp-text">{{cancelalarmstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">LORA发射</text>
+    <text class="pp-text">{{loraenablestr}}</text>
     </view>
     <view class="rowclass">
     <text class="open-text">电池电量</text>
@@ -76,12 +93,19 @@
     <text class="open-text">报警次数</text>
     <text class="pp-text">{{alarmstr}}</text>
     </view>
+    <view class="rowclass">
+    <text class="open-text">运行模式</text>
+    <text class="pp-text">{{runmodestr}}</text>
+    </view>
   </view>
 
   <view class="section">
     <view class="rowclass">
       <button style='margin-top: 10px;' bindtap="updateParameter"  class="login-btn" form-type="alarm">修改</button>
       <button style='margin-top: 10px;' bindtap="readParameter"  class="login-btn" form-type="alarm">读取</button>
+      <button style='margin-top: 10px;' bindtap="updateParameter_tomode2"  class="login-btn" form-type="alarm">胸牌</button>
+      <button style='margin-top: 10px;' bindtap="updateParameter_tomode4"  class="login-btn" form-type="alarm">锚点</button>
+      <button style='margin-top: 10px;' bindtap="updateParameter_tomode3"  class="login-btn" form-type="alarm">运输</button>
     </view>
   </view>
   <text class="open-text">{{motto}}</text>

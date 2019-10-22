@@ -232,6 +232,8 @@ Page({
         statusstr = "正常运行中！";
       }  else if (mystatus == 0) {
         statusstr = "1301初始化失败！";
+      } else if (mystatus == 4) {
+        statusstr = "DHCP失败,静态地址运行中！";
       }
       
       console.log("hardware:"+hardware);
@@ -271,6 +273,27 @@ Page({
         })
     }
     )
+  },
+  toDfu: function (e) {
+    mypage.setData({ motto: "等待进入DFU..." });
+
+    myProcess.configToDfu_station(mystationId, function (msg) {
+      mypage.setMotto(msg)
+    }, function (arr) {
+      mypage.setData({ motto: "DFU等待升级!" });
+    })
+
+
+    // if (sendInterval == null || bleScan == null || loraSf == null || accThres == null || sendTime==null){
+    //   console.log("data error")
+    //   mypage.setData({motto: "数据不完整!"});
+    //   return;
+    // }
+    // myProcess.configParameter(mypage.data.deviceId, sendInterval, bleScan, loraSf, accThres, sendTime,beaconMask, function (msg){
+    //   mypage.setMotto(msg)
+    // }, function (arr) {
+    //   mypage.setData({ motto: "配置完成!" });
+    // }) 
   },
 
 })

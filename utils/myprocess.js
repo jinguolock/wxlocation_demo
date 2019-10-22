@@ -65,6 +65,16 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
+  syncParameter_station_adv(deviceId, msgFunc, reFunc) {
+    var _this = this;
+    var content = new Uint8Array(1);
+    content[0] = 1;
+    this.sendBleByAuth(deviceId, content, 0x44,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
   syncParameter_dtu(deviceId, msgFunc, reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
@@ -121,7 +131,7 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
-  configParameter2(deviceId, sendInterval, sendtime, beaconMask,beaconValue,thresValue,alarmtype, msgFunc, reFunc) {
+  configParameter2(deviceId, sendInterval, sendtime, beaconMask,beaconValue,thresValue,alarmtype,advInterval,loraEn, msgFunc, reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
     // for(var i=0;i<4500;i++){
@@ -131,7 +141,7 @@ let myProcess = {
     var accthres = thresValue;
     var blescan=160;
     var alarmnumber=10;
-    var content = new Uint8Array(15);
+    var content = new Uint8Array(20);
     content[0] = lorasf & 0xff;
     content[1] = sendInterval & 0xff;
     content[2] = accthres & 0xff;
@@ -147,9 +157,28 @@ let myProcess = {
     content[12] = beaconValue & 0xff;
     content[13] = alarmtype & 0xff;
     content[14] = alarmnumber & 0xff;
+    content[15] = (advInterval >> 24) & 0xff;
+    content[16] = (advInterval >> 16) & 0xff;
+    content[17] = (advInterval >> 8) & 0xff;
+    content[18] = (advInterval) & 0xff;
+    content[19] = (loraEn) & 0xff;
     //content[11] = 0xC6;
     //content[12] = 0xB1;
     this.sendBleByAuth(deviceId, content, 0x31,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
+  configParameter_tomode(deviceId, modenumer, msgFunc, reFunc) {
+    var _this = this;
+    // var content = new Uint8Array(4500);
+    // for(var i=0;i<4500;i++){
+    //   content[i] = (i&0xff);
+    // }
+    var content = new Uint8Array(1);
+    content[0] = modenumer & 0xff;
+    this.sendBleByAuth(deviceId, content, 0x34,
       function (msg) {
         console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
         reFunc && reFunc(msg);
@@ -200,6 +229,50 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
+  configParameter_stationAdv(deviceId, interval, online, mask, mvalue, beacon,reset, msgFunc, reFunc) {
+    var _this = this;
+
+    var content = new Uint8Array(14);
+    content[0] = (mask>>8) & 0xff;
+    content[1] = (mask) & 0xff;
+
+    content[2] = (mvalue >> 8) & 0xff;
+    content[3] = (mvalue) & 0xff;
+
+    content[4] = (interval >> 24) & 0xff;
+    content[5] = (interval >> 16) & 0xff;
+    content[6] = (interval >> 8) & 0xff;
+    content[7] = (interval) & 0xff;
+
+    content[8] = beacon&0xff;
+    content[9] = online&0xff;
+
+    content[10] = (reset >> 24) & 0xff;
+    content[11] = (reset >> 16) & 0xff;
+    content[12] = (reset >> 8) & 0xff;
+    content[13] = (reset) & 0xff;
+
+    this.sendBleByAuth(deviceId, content, 0x43,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
+  configToDfu_station(deviceId, msgFunc, reFunc) {
+    var _this = this;
+    // var content = new Uint8Array(4500);
+    // for(var i=0;i<4500;i++){
+    //   content[i] = (i&0xff);
+    // }
+
+    var content = new Uint8Array(1);
+    content[0]=1;
+    this.sendBleByAuth(deviceId, content, 0x42,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
   configParameter_dtu(deviceId, runmode, loramode, channel,sf, power, baud, sleep, support, ask, msgFunc, reFunc) {
     var _this = this;
     
@@ -228,6 +301,23 @@ let myProcess = {
     }
 
     this.sendBleByAuth(deviceId, content, 0x56,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
+  configParameter_dtuID(deviceId,changeID, msgFunc, reFunc) {
+    var _this = this;
+
+    var idarr = _this.getHexByStr2(changeID);
+
+    var content = new Uint8Array(4);
+
+    content[0] = idarr[0];
+    content[1] = idarr[1];
+    content[2] = idarr[2];
+    content[3] = idarr[3];
+    this.sendBleByAuth(deviceId, content, 0x57,
       function (msg) {
         console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
         reFunc && reFunc(msg);

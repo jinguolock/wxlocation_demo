@@ -72,7 +72,17 @@ Page({
   todtuCfg: function () {
    // wx.navigateTo({ url: "../mydtucfg/mydtucfg" })
     wx.navigateTo({ url: "../dtu/dtu" })
-     //wx.navigateTo({ url: "../mycfg/mycfg" })
+    // wx.navigateTo({ url: "../mycfg/mycfg" })
+
+  },
+  tostationAdvCfg: function () {
+    wx.navigateTo({ url: "../stationadv/stationadv" })
+
+  },
+  toIdCfg: function () {
+    // wx.navigateTo({ url: "../mydtucfg/mydtucfg" })
+    //wx.navigateTo({ url: "../dtu/dtu" })
+    wx.navigateTo({ url: "../ids/ids" })
 
   }
 });
