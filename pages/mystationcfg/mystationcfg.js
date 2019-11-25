@@ -234,6 +234,10 @@ Page({
         statusstr = "1301初始化失败！";
       } else if (mystatus == 4) {
         statusstr = "DHCP失败,静态地址运行中！";
+      } else if (mystatus == 5) {
+        statusstr = "DNS访问失败，无法推送数据！";
+      } else if (mystatus == 6) {
+        statusstr = "URL访问失败，无法推送数据！";
       }
       
       console.log("hardware:"+hardware);

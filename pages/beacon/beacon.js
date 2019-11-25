@@ -41,8 +41,12 @@ Page({
     mypage = this;
     preId="";
     blueApi.searchBleDevices2("IB","IR");
+
+    //blueApi.searchBleDevicesBeacon()
+   // blueApi.searchBeacon()
+
     timeIndex = 0;
-    intervalid = setInterval(mypage.mytimeout, 500);
+    intervalid = setInterval(mypage.mytimeout, 1000);
   },
   onHide: function () {
     console.log("onHide")
@@ -84,16 +88,32 @@ Page({
   mytimeout: function () {
     var list = blueApi.getStationNameRssi();
     if (preId != null && preId.length>0){
-      var li = new Array();
-      for (let i in list) {
-        if (list[i].deviceName.indexOf(preId)==2){
-          li.push(list[i]);
+      var rssi = parseInt(preId, 10);
+      if (!(isNaN(rssi))) {
+        var li = new Array();
+        for (let i in list) {
+          var deviceRssi = parseInt(list[i].rssi, 10);
+          if (!(isNaN(deviceRssi)) && (deviceRssi>rssi)) {
+            li.push(list[i]);
+          }
         }
+        this.setData({
+          findList: li
+        })
       }
-      this.setData({
-        findList: li
-      })
+      
     }else{
+
+      // for (let i in list) {
+      //   var mstr = list[i].deviceName.substr(0, 4)
+      //   var jstr = list[i].deviceName.substr(4, 4)
+        
+      //   var mv=myProcess.getHexByStr2(mstr)
+      //   var jv = myProcess.getHexByStr2(jstr)
+      //   list[i].major = ((mv[0] & 0xff) << 8) | (mv[1] & 0xff);
+      //   list[i].minor = ((jv[0] & 0xff) << 8) | (jv[1] & 0xff);
+      // }
+
       this.setData({
         findList: list
       })
@@ -105,6 +125,7 @@ Page({
       timeIndex = 0;
       blueApi.stopSearch();
       blueApi.searchBleDevices2("IB", "IR");
+     // blueApi.searchBleDevicesBeacon();
     }
   },
 

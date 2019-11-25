@@ -1,8 +1,8 @@
 <view class="container">
 <view class="find-list">
   <view class="rowclass">
-    <text class="open-text">ID过滤</text>
-    <input name="id_filter" bindinput="idFilterInputEvent"   auto-focus placeholder="输入ID" />
+    <text class="open-text">RSSI过滤</text>
+    <input name="id_filter" bindinput="idFilterInputEvent"   auto-focus placeholder="输入RSSI" />
     </view>
 </view>
   <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="items">

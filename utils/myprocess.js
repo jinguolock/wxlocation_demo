@@ -37,6 +37,23 @@ let myProcess = {
     }
     )
   },
+  sendBleByAuthPwdBeacon(beaconmj, pwd, content, command, reFunc, msgFunc, sendFinishFunc, failFunc) {
+    var _this = this;
+    var willsendbyte;
+    var did = pwd;
+    console.log("get pwd :" + did);
+    myApi.webmain("location", "getpwd", { id: did }, function (obj) {
+      if (obj != null && obj.pwd != null) {
+        msgFunc && msgFunc("数据完成，准备操作……")
+        willsendbyte = _this.getHexByStr(obj.pwd);
+        //simpleSendBleMsg(deviceName,content,crypt,command,timeout,isCloseFinish,reFunc,msgFunc,failFunc)
+        blueApi.simpleSendBleMsgBeacon(beaconmj, content, willsendbyte, command, 30000, true, reFunc, msgFunc, sendFinishFunc, failFunc)
+      }
+    }, function (err) {
+      msgFunc && msgFunc("准备数据失败，网络错误:" + err)
+    }
+    )
+  },
   syncParameter(deviceId,msgFunc,reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
@@ -89,7 +106,7 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
-    syncParameter_beacon(deviceId,pwd, msgFunc, reFunc) {
+    syncParameter_beacon(beaconmj,pwd, msgFunc, reFunc) {
     var _this = this;
     // var content = new Uint8Array(4500);
     // for(var i=0;i<4500;i++){
@@ -97,7 +114,9 @@ let myProcess = {
     // }
     var content = new Uint8Array(1);
     content[0] = 1;
-      this.sendBleByAuthPwd(deviceId, pwd,content, 0x50,
+      
+      this.sendBleByAuthPwd(beaconmj, pwd,content, 0x50,
+      //this.sendBleByAuthPwdBeacon(beaconmj, pwd,content, 0x50,
       function (msg) {
         console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
         reFunc && reFunc(msg);
@@ -323,7 +342,7 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
-  configParameter_beacon(deviceId,pwd, major, minor, rssi, send, tx, setpwdval, msgFunc, reFunc) {
+  configParameter_beacon(beaconmj,pwd, major, minor, rssi, send, tx, setpwdval, msgFunc, reFunc) {
     var _this = this;
     var content = new Uint8Array(14);
     var pwdarr =_this.getHexByStr2(setpwdval);
@@ -342,7 +361,8 @@ let myProcess = {
     content[11] = updateInterval & 0xff;
     content[12] = rssi & 0xff;
     content[13] = tx & 0xff;
-    this.sendBleByAuthPwd(deviceId,pwd, content, 0x51,
+    this.sendBleByAuthPwd(beaconmj,pwd, content, 0x51,
+    //this.sendBleByAuthPwdBeacon(beaconmj,pwd, content, 0x51,
       function (msg) {
         console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
         reFunc && reFunc(msg);

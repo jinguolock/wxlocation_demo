@@ -84,15 +84,28 @@ Page({
    mytimeout: function () {
      var list = blueApi.getStationNameRssi();
      if (preId != null && preId.length > 0) {
-       var li = new Array();
-       for (let i in list) {
-         if (list[i].deviceName.indexOf(preId) == 2) {
-           li.push(list[i]);
+       var rssi = parseInt(preId, 10);
+       if (!(isNaN(rssi))) {
+         var li = new Array();
+         for (let i in list) {
+           var deviceRssi = parseInt(list[i].rssi, 10);
+           if (!(isNaN(deviceRssi)) && (deviceRssi > rssi)) {
+             li.push(list[i]);
+           }
          }
+         this.setData({
+           findList: li
+         })
        }
-       this.setData({
-         findList: li
-       })
+      //  var li = new Array();
+      //  for (let i in list) {
+      //    if (list[i].deviceName.indexOf(preId) == 2) {
+      //      li.push(list[i]);
+      //    }
+      //  }
+      //  this.setData({
+      //    findList: li
+      //  })
      } else {
        this.setData({
          findList: list

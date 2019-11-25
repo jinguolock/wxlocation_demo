@@ -1,13 +1,14 @@
 <view class="container">
 <view class="find-list">
   <view class="rowclass">
-    <text class="open-text">ID过滤</text>
-    <input name="id_filter" bindinput="idFilterInputEvent"   auto-focus placeholder="输入ID" />
+    <text class="open-text">rssi过滤</text>
+    <input name="id_filter" bindinput="idFilterInputEvent"   auto-focus placeholder="输入rssi" />
     </view>
 </view>
   <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="items">
   <view class="find-items">
-      <text >BEACON:{{items.deviceName}}</text>
+      <!--text >major:{{items.major}} minor:{{items.minor}}</text-->
+      <text >锚点:{{items.deviceName}} </text>
     </view>
     
     <view class="find-items">

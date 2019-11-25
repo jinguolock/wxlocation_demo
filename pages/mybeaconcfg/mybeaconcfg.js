@@ -57,7 +57,8 @@ Page({
     beaconId = wx.getStorageSync('configBeaconId')
     console.log("my beaconId:" + beaconId)
     if (pwdval==null||pwdval.length==0){
-      pwdval = beaconId.substr(2);
+     // pwdval = beaconId
+      pwdval = beaconId.substr(2)
     }
     if (setpwdval == null || setpwdval.length == 0) {
       setpwdval = pwdval
@@ -150,6 +151,7 @@ Page({
       mypage.setData({ motto: "密码或设置数据有误!" });
       return;
     }
+    
     console.log("or rssi:" + rssi);
     console.log("or tx:" + tx);
     rssi = mypage.int2uint(rssi);

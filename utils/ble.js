@@ -7,6 +7,7 @@ var myNusDataCache = new Uint8Array(8000);
 var myNusDataCache_length = 0;
 var stationMap=new Object();
 var batteryMap=new Object();
+var beaconIdMap=new Object();
 var timerId;
 let blueApi = {
   blue_data: {
@@ -32,6 +33,7 @@ let blueApi = {
       o.deviceName=i;
       o.rssi = stationMap[i];
       o.battery=batteryMap[i];
+      o.beaconId = beaconIdMap[i];
       re.push(o);
     }
     return re;
@@ -39,6 +41,64 @@ let blueApi = {
   clearNameRssi() {
     stationMap=new Object();
   },
+
+  stopSearchBeacon() {
+    wx.stopBeaconDiscovery({
+      success: function () {
+        searchBeacon();
+      }
+    })
+    },
+  searchBeacon() {
+    if (!wx.openBluetoothAdapter) {
+      this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
+      return;
+    }
+    //检测蓝牙状态
+    wx.openBluetoothAdapter({
+      success: function (res) {//蓝牙状态：打开
+        wx.startBeaconDiscovery({//开始搜索附近的iBeacon设备
+          //uuids: ['FDA50693-A4E2-4FB1-AFCF-C6EB07647825'],//参数uuid
+          uuids: ['01122334-4556-6778-899a-abbc30000008'],//参数uuid
+          success: function (res) {
+            wx.onBeaconUpdate(function (res) {//监听 iBeacon 设备的更新事件  
+              //封装请求数据 
+              var beacons = res.beacons;
+              var reqContent = {};
+              var bleArray = [];
+              for (var i = 0; i < beacons.length; i++) {
+                var bleObj = {};
+                bleObj.distance = beacons[i].accuracy;
+                bleObj.rssi = beacons[i].rssi;
+                bleObj.mac = beacons[i].major + ":" + beacons[i].minor;
+                var mytemp = "uuid:"+beacons[i].uuid+";"+
+                  "major:" + beacons[i].major + ";minor:" + beacons[i].minor
+                  + ";proximity:" + beacons[i].proximity
+                  + ";accuracy:" + beacons[i].accuracy
+                  + ";rssi:" + beacons[i].rssi
+                console.log(mytemp)
+                bleArray.push(bleObj);
+              }
+              //reqContent.ble = bleArray;
+              //请求后台向redis插入数据
+             // redisSave(reqContent);
+            });
+          },
+          fail: function (res) {
+            //先关闭搜索再重新开启搜索,这一步操作是防止重复wx.startBeaconDiscovery导致失败
+            stopSearchBeacon();
+          }
+        })
+      },
+      fail: function (res) {//蓝牙状态：关闭
+        wx.showToast({ title: "请打开蓝牙", icon: "none", duration: 2000 })
+      }
+    })
+    },
+
+
+
+
   getCacheReturnContent(){
    // this.getcheck(myNusDataCache, 0, bs.length) & 0xff;
     // var length = ((myNusDataCache[4] << 8) & 0xFF00) | (myNusDataCache[5] & 0xFF);
@@ -200,6 +260,21 @@ let blueApi = {
       }
     })
   },
+  searchBleDevicesBeacon() {
+    if (!wx.openBluetoothAdapter) {
+      this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
+      return;
+    }
+
+    var _this = this;
+    this.clearNameRssi()
+    wx.openBluetoothAdapter({
+      success: function (res) {
+        console.log("ble ready complete")
+        _this.startSearchBleBeacons();
+      }
+    })
+  },
   connect() {
     if (!wx.openBluetoothAdapter) {
       this.showError("当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。");
@@ -351,7 +426,7 @@ let blueApi = {
     end[3] = this.getcheck(bs, 0, bs.length) & 0xff;
     end[5] = this.getcheck(end, 1, 5) & 0xff;
     this.sendHex(start);
-    //this.sleep(1);
+    this.sleep(1);
     var temp=0;
     for (var i = 0; i < numbers; i++) {
       if(hasmod&&(i==(numbers-1))){
@@ -368,7 +443,7 @@ let blueApi = {
         }
         this.sendHex(send);
       }
-     // this.sleep(1);
+      this.sleep(1);
     }
     this.sendHex(end);
 
@@ -517,6 +592,37 @@ let blueApi = {
       }
     })
   },
+  startSearchBleBeacons() {
+    var _this = this;
+    stationMap = new Object();
+    wx.startBluetoothDevicesDiscovery({
+      services: [],
+      success(res) {
+        wx.onBluetoothDeviceFound(function (res) {
+          // console.log("device length:" + res.devices[0].name)
+          console.log("device adv:" + _this.arrayBufferToHexString(res.devices[0].advertisData))
+          //console.log("device rssi:" + res.devices[0].RSSI + ";device name:" + res.devices[0].name + ";device mac:" + res.devices[0].deviceId)
+          //console.log("device uuid:" + _this.arrayBufferToHexString(res.devices[0].advertisData));
+          var mj = _this.getBeaconMajorMinor(res.devices[0].advertisData);
+          if (mj != null) {
+            console.log("get beacon  name:" + mj);
+            stationMap[mj] = res.devices[0].RSSI
+            batteryMap[mj] = _this.getBeaconUUIDBattery(res.devices[0].advertisData)
+            beaconIdMap[mj] = _this.getBeaconId(res.devices[0].advertisData)
+          }
+          //var device = _this.filterDevice(res.devices);
+          // if (res.devices[0].name.length > 0) {
+          //   var st = res.devices[0].name.substr(0, 2);
+          //   if (st == pre && res.devices[0].name.length == 10) {
+          //     console.log("get station  name:" + res.devices[0].name);
+          //     stationMap[res.devices[0].name] = res.devices[0].RSSI
+          //   }
+          // }
+
+        });
+      }
+    })
+  },
   startSearch() {
     var _this = this;
     wx.startBluetoothDevicesDiscovery({
@@ -548,11 +654,16 @@ let blueApi = {
           console.log("device adv:" + _this.arrayBufferToHexString(res.devices[0].advertisData))
           //var device = _this.filterDevice(res.devices);
           var mj = _this.getBeaconMajorMinor(res.devices[0].advertisData);
-          if (mj != null && mj == _this.blue_data.beacon_mj) {
-            console.log("get beacon  mj:" + mj);
-            _this.blue_data.device_id = res.devices[0].deviceId;
-            _this.connectDevice();
-            _this.stopSearch();
+         // if (mj != null && mj == _this.blue_data.beacon_mj) {
+          if (mj != null) {
+            var beaconid = _this.getBeaconId(res.devices[0].advertisData);
+            if (beaconid == _this.blue_data.beacon_mj){
+              console.log("get beacon  Id:" + mj);
+              _this.blue_data.device_id = res.devices[0].deviceId;
+              _this.connectDevice();
+              _this.stopSearch();
+            }
+            
           }
         });
       }
@@ -708,6 +819,7 @@ let blueApi = {
     }
 
   },
+  //59 00 02 15 0C 94 23 34 45 56 67 78 89 9A AB BC 10 00 00 05 10 00 00 05 CE
   getBeaconMajorMinor(buffer){
     let bufferType = Object.prototype.toString.call(buffer)
     if (buffer != '[object ArrayBuffer]') {
@@ -717,7 +829,7 @@ let blueApi = {
     if (dataView.byteLength!=25){
       return
     }
-    if (dataView.getUint8(0) != 0x59 || dataView.getUint8(1) != 0x00 || dataView.getUint8(2) != 0x02 || dataView.getUint8(3) != 0x15 ) {
+    if ((dataView.getUint8(0) != 0x59 && dataView.getUint8(0) != 0x4C) || dataView.getUint8(1) != 0x00 || dataView.getUint8(2) != 0x02 || dataView.getUint8(3) != 0x15 ) {
       return
     }
     //var str = dataView.getUint8(20);
@@ -729,15 +841,50 @@ let blueApi = {
     dataView2.setUint8(3, dataView.getUint8(23));
     return this.arrayBufferToHexString(buffer2);
   },
+   getBeaconMajorMinor(buffer){
+    let bufferType = Object.prototype.toString.call(buffer)
+    if (buffer != '[object ArrayBuffer]') {
+      return
+    }
+    let dataView = new DataView(buffer)
+    if (dataView.byteLength!=25){
+      return
+    }
+    if ((dataView.getUint8(0) != 0x59 && dataView.getUint8(0) != 0x4C) || dataView.getUint8(1) != 0x00 || dataView.getUint8(2) != 0x02 || dataView.getUint8(3) != 0x15 ) {
+      return
+    }
+    //var str = dataView.getUint8(20);
+    var buffer2 = new ArrayBuffer(4);
+    let dataView2 = new DataView(buffer2);
+    dataView2.setUint8(0, dataView.getUint8(20));
+    dataView2.setUint8(1, dataView.getUint8(21));
+    dataView2.setUint8(2, dataView.getUint8(22));
+    dataView2.setUint8(3, dataView.getUint8(23));
+    return this.arrayBufferToHexString(buffer2);
+  },
+  getBeaconId(buffer) {
+    let bufferType = Object.prototype.toString.call(buffer)
+    if (buffer != '[object ArrayBuffer]') {
+      return
+    }
+    let dataView = new DataView(buffer)
+    var buffer2 = new ArrayBuffer(4);
+    let dataView2 = new DataView(buffer2);
+    dataView2.setUint8(0, dataView.getUint8(16));
+    dataView2.setUint8(1, dataView.getUint8(17));
+    dataView2.setUint8(2, dataView.getUint8(18));
+    dataView2.setUint8(3, dataView.getUint8(19));
+    return this.arrayBufferToHexString(buffer2);
+  },
   getBeaconUUIDBattery(buffer) {
     let bufferType = Object.prototype.toString.call(buffer)
     if (buffer != '[object ArrayBuffer]') {
       return
     }
     let dataView = new DataView(buffer)
-    if (dataView.byteLength != 25) {
-      return
-    }
+     if (dataView.byteLength <10) {
+       return
+     }
     if (dataView.getUint8(2) != 0x02 || dataView.getUint8(3) != 0x15) {
       return
     }

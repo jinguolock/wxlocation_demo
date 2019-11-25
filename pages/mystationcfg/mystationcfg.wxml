@@ -70,6 +70,10 @@
     <text class="open-text">是否静态</text>
     <text class="pp-text">{{staticipstr}}</text>
     </view>
+    <view class="rowclass">
+    <text class="open-text">基站版本</text>
+    <text class="pp-text">{{hardwarestr}}</text>
+    </view>
     <!-- <view class="rowclass">
     <text class="open-text">协议类型</text>
     <text class="pp-text">{{tcpstr}}</text>
@@ -78,6 +82,7 @@
     <text class="open-text">当前状态</text>
     <text class="pp-text">{{statusstr}}</text>
     </view>
+    
     <!-- <view class="rowclass">
     <text class="open-text">服务端口</text>
     <text class="pp-text">{{serverportstr}}</text>
