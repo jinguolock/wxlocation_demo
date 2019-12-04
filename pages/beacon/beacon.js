@@ -85,6 +85,15 @@ Page({
     wx.setStorageSync('configBeaconId', selectNodeId)
     wx.navigateTo({ url: "../mybeaconcfg/mybeaconcfg" })
   },
+  touuidcfg: function (e) {
+
+    clearInterval(intervalid)
+    blueApi.stopSearch();
+    selectNodeId = e.target.dataset.aid;
+    console.log("tocfg,nodeId:" + selectNodeId)
+    wx.setStorageSync('configBeaconId', selectNodeId)
+    wx.navigateTo({ url: "../mybeaconuuidcfg/mybeaconuuidcfg" })
+  },
   mytimeout: function () {
     var list = blueApi.getStationNameRssi();
     if (preId != null && preId.length>0){

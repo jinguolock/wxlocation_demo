@@ -368,6 +368,21 @@ let myProcess = {
         reFunc && reFunc(msg);
       }, msgFunc)
   },
+  configUuid_beacon(beaconmj, pwd, uuid,msgFunc, reFunc) {
+    var _this = this;
+    var content = new Uint8Array(16);
+    var uuidarr = _this.getHexByStr2(uuid);
+    for(var i=0;i<16;i++){
+      content[i] = uuidarr[i];
+    }
+    
+    this.sendBleByAuthPwd(beaconmj, pwd, content, 0x52,
+      //this.sendBleByAuthPwdBeacon(beaconmj,pwd, content, 0x51,
+      function (msg) {
+        console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
+        reFunc && reFunc(msg);
+      }, msgFunc)
+  },
   getStrByHex(hexArr){
     var hexStr = '';
     for (var i = 0; i < hexArr.length; i++) {
@@ -385,6 +400,16 @@ let myProcess = {
   getStrByHex2(hexArr) {
     var hexStr = '';
     for (var i = 0; i < hexArr.length; i++) {
+      var str = hexArr[i];
+      var hex = (str & 0xff).toString(16);
+      hex = (hex.length === 1) ? '0' + hex : hex;
+      hexStr += hex;
+    }
+    return hexStr;
+  },
+  getStrByHexLength(hexArr,start,len) {
+    var hexStr = '';
+    for (var i = start; i < len; i++) {
       var str = hexArr[i];
       var hex = (str & 0xff).toString(16);
       hex = (hex.length === 1) ? '0' + hex : hex;

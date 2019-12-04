@@ -1,0 +1,78 @@
+<view class="container">
+    <!--view class="logo">
+      <image src="../../images/logo.png"></image>
+    </view-->
+
+
+    
+  <view class="find-list">
+    <text class="tt-text">配置UUID</text>
+    <view class="rowclass">
+    <text class="open-text">输入密码</text>
+    <input name="ip" bindinput="pwdInputEvent"  placeholder="输入配置密码" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">1~8</text>
+    <input name="uuid18" bindinput="uuid18InputEvent"    placeholder="1~8位" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">9~16</text>
+    <input name="uuid916" bindinput="uuid916InputEvent"    placeholder="9~16位" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">17~24</text>
+    <input name="uuid1724" bindinput="uuid1724InputEvent"    placeholder="17~24位" />
+    </view>
+    <view class="rowclass">
+    <text class="open-text">25~32</text>
+    <input name="uuid2532" bindinput="uuid2532InputEvent"    placeholder="25~32位" />
+    </view>
+ 
+    <!--view class="rowclass">
+    <text class="open-text">协议类型</text>
+    <button bindtap="tcpsend"   class="open-button" type='primary'>TCP</button>
+    <button bindtap="udpsend"  class="open-button" type='primary'>UDP</button>
+    </view-->
+  </view>
+
+  <view class="find-list">
+    <text class="tt-text">当前UUID:{{deviceId}}</text>
+    <view class="rowclass">
+    <text class="open-text">1~8位</text>
+    <text class="pp-text">{{uuid18str}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">9~16位</text>
+    <text class="pp-text">{{uuid916str}}</text>
+    </view>
+    <!--view class="rowclass">
+    <text class="open-text">UUID</text>
+    <text class="pp-text">{{uuidstr}}</text>
+    </view-->
+    <view class="rowclass">
+    <text class="open-text">17~24位</text>
+    <text class="pp-text">{{uuid1724str}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">25~32位</text>
+    <text class="pp-text">{{uuid2532str}}</text>
+    </view>
+    
+    <!-- <view class="rowclass">
+    <text class="open-text">服务端口</text>
+    <text class="pp-text">{{serverportstr}}</text>
+    </view>
+    <view class="rowclass">
+    <text class="open-text">本地端口</text>
+    <text class="pp-text">{{localportstr}}</text>
+    </view> -->
+  </view>
+
+  <view class="section">
+    <view class="rowclass">
+      <button style='margin-top: 10px;' bindtap="updateParameter"  class="login-btn" form-type="alarm">修改</button>
+      <button style='margin-top: 10px;' bindtap="readParameter"  class="login-btn" form-type="alarm">读取</button>
+    </view>
+  </view>
+  <text class="open-text">{{motto}}</text>
+</view>

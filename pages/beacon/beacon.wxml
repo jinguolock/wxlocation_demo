@@ -13,6 +13,7 @@
     
     <view class="find-items">
       <button data-aid="{{items.deviceName}}" bindtap="tocfg" class="open-button" type='primary'>参数配置 </button>
+      <button data-aid="{{items.deviceName}}" bindtap="touuidcfg" class="open-button" type='primary'>UUID配置 </button>
        <text  class="earnest-money">信号：{{items.rssi}} 电量：{{items.battery}}V</text>
     </view>
   </view>
