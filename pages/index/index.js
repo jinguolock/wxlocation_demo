@@ -2,6 +2,7 @@
 //获取应用实例
 var app = getApp()
 var util = require('../../utils/util');
+var blueApi = require('../../utils/ble.js').Ble;
 
 Page({
   data: {
@@ -56,6 +57,9 @@ Page({
     that.setTxtAds();
     that.setSubBanner();
     that.setModule();
+
+    blueApi.getSystemInfo()
+
   },
   toStationCfg:function(){
     //wx.navigateTo({ url: "index" })

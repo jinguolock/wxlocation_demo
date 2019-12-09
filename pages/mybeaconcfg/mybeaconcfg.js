@@ -4,33 +4,39 @@ var myProcess = require('../../utils/myprocess.js').MyProcess;
 const app = getApp()
 var mypage
 var beaconId
-var pwdval=""
-var setpwdval=""
-var majorval =0
-var minorval =0
+var pwdval = ""
+var setpwdval = ""
+var majorval 
+var minorval 
 var uuidval = ""
-var rssival = 0
-var txval = 0
-var sendval = 1
-var batteryval=0
+var rssival 
+var txval 
+var sendval 
+var batteryval 
 var hardwareval = ""
 var mystationId
 
-var staticStrarr = ["未知","动态", "静态"]
-var tcpStrarr = ["unkown","UDP", "TCP"]
+var readmajor ;
+var readminor ;
+var readrssi ;
+var readtx ;
+var readsend ;
+var staticStrarr = ["未知", "动态", "静态"]
+var tcpStrarr = ["unkown", "UDP", "TCP"]
 
 Page({
   data: {
     deviceId: "",
-    majorstr:"",
+    majorstr: "",
     minorstr: "",
     uuidstr: "",
     rssistr: "",
     txstr: "",
-    sendstr:"",
+    sendstr: "",
     batterystr: "",
-    hardwarestr:"",
-    motto:""
+    hardwarestr: "",
+    usePwd:"",
+    motto: ""
   },
   //事件处理函数
   bindViewTap: function () {
@@ -38,13 +44,13 @@ Page({
       url: '../logs/logs'
     })
   },
-  getArrIndex: function (v,arr) {
-    var vv=v+0;
-    for(var i=0;i<arr.length;i++){
-      if(arr[i]==vv){
+  getArrIndex: function (v, arr) {
+    var vv = v + 0;
+    for (var i = 0; i < arr.length; i++) {
+      if (arr[i] == vv) {
         return i;
       }
-     
+
     }
     return -1;
   },
@@ -53,20 +59,36 @@ Page({
     let that = this;
     mypage = this;
     //blueApi.searchBleDevices();
-   // intervalid = setInterval(mypage.mytimeout, 1000);
+    // intervalid = setInterval(mypage.mytimeout, 1000);
     beaconId = wx.getStorageSync('configBeaconId')
+    var up = wx.getStorageSync('configBeaconPwd')
+    
     console.log("my beaconId:" + beaconId)
-    if (pwdval==null||pwdval.length==0){
-     // pwdval = beaconId
+    if (pwdval == null || pwdval.length == 0) {
+      // pwdval = beaconId
       pwdval = beaconId.substr(2)
     }
+    
+
+    if (up != null && up.length > 0) {
+      mypage.setData({
+        usePwd: up
+      })
+      pwdval=up
+    }else{
+      mypage.setData({
+        usePwd: beaconId.substr(2)
+      })
+    }
+
     if (setpwdval == null || setpwdval.length == 0) {
       setpwdval = pwdval
     }
-    
+
     mypage.setData({
       deviceId: beaconId
-     })
+    })
+    this.getParameter()
   },
   onLoad: function () {
     mypage = this
@@ -79,15 +101,27 @@ Page({
     mypage.setData({ motto: str })
   },
   sendstatic: function (e) {
-    mypage.setData({ staticipstr: "静态"})
+    mypage.setData({ staticipstr: "静态" })
     staticipval = 1
   },
   senddhcp: function (e) {
     mypage.setData({ staticipstr: "动态" })
     staticipval = 2
   },
-  pwdInputEvent:function(e){
-    pwdval=e.detail.value
+  pwdInputEvent: function (e) {
+    pwdval = e.detail.value
+    wx.setStorageSync('configBeaconPwd', pwdval)
+    if (pwdval != null && pwdval.length > 0) {
+      
+      mypage.setData({
+        usePwd: pwdval
+      })
+    } else {
+      pwdval = beaconId.substr(2)
+      mypage.setData({
+        usePwd: beaconId.substr(2)
+      })
+    }
   },
   setpwdInputEvent: function (e) {
     setpwdval = e.detail.value
@@ -107,13 +141,38 @@ Page({
   sendInputEvent: function (e) {
     sendval = e.detail.value
   },
-  
-  setError:function (msg){
+
+  setError: function (msg) {
     mypage.setData({
       motto: msg
     })
   },
   updateParameter: function (e) {
+    // readmajor = major + "";
+    // readminor = minor + "";
+    // readrssi = rssi_level + "";
+    // readtx = tx_power + "";
+    // readsend = adv_time + "";
+    if (majorval == null ||myProcess.trim(majorval).length==0){
+      console.log("major is null,use:" + readmajor);
+      majorval = readmajor;
+    }
+    if (minorval == null || myProcess.trim(minorval).length == 0) {
+      console.log("minor is null,use:" + readminor);
+      minorval = readminor;
+    }
+    if (rssival == null || myProcess.trim(rssival).length == 0) {
+      console.log("rssi is null,use:" + readrssi);
+      rssival = readrssi;
+    }
+    if (txval == null || myProcess.trim(txval).length == 0) {
+      console.log("tx is null,use:" + readtx);
+      txval = readtx;
+    }
+    if (sendval == null || myProcess.trim(sendval).length == 0) {
+      console.log("tx is null,use:" + readsend);
+      sendval = readsend;
+    }
     var major = parseInt(majorval, 10);
     var minor = parseInt(minorval, 10);
     var rssi = parseInt(rssival, 10);
@@ -121,41 +180,41 @@ Page({
     var send = parseInt(sendval, 10);
 
     mypage.setData({ motto: "开始配置..." });
-    if (isNaN(major)) {
+    if (isNaN(major) || majorval == null || majorval.length==0) {
       console.log("major error:" + major)
       mypage.setData({ motto: "major数据有误!" });
       return;
     }
-    if (isNaN(minor)) {
+    if (isNaN(minor) || minorval == null || minorval.length == 0) {
       console.log("minor error:" + major)
       mypage.setData({ motto: "minor数据有误!" });
       return;
     }
-    if (isNaN(rssi)) {
+    if (isNaN(rssi) || rssival == null || rssival.length == 0) {
       console.log("rssi error:" + rssi)
       mypage.setData({ motto: "rssi数据有误!" });
       return;
     }
-    if (isNaN(send)) {
+    if (isNaN(send) || sendval == null || sendval.length == 0) {
       console.log("send error:" + send)
       mypage.setData({ motto: "发送周期数据有误!" });
       return;
     }
-    if (isNaN(tx)) {
+    if (isNaN(tx) || txval == null || txval.length == 0) {
       console.log("tx error:" + tx)
       mypage.setData({ motto: "发送功率数据有误!" });
       return;
     }
-    if (pwdval.length != 8 || setpwdval.length!=8){
+    if (pwdval.length != 8 || setpwdval.length != 8) {
       console.log("pwdval or setpwdval error:" + pwdval + ";" + setpwdval)
       mypage.setData({ motto: "密码或设置数据有误!" });
       return;
     }
-    
+
     console.log("or rssi:" + rssi);
     console.log("or tx:" + tx);
     rssi = mypage.int2uint(rssi);
-    tx=mypage.int2uint(tx);
+    tx = mypage.int2uint(tx);
     console.log("major:" + major);
     console.log("minor:" + minor);
     console.log("rssi:" + rssi);
@@ -164,11 +223,11 @@ Page({
     console.log("pwdval:" + pwdval);
     console.log("setpwdval:" + setpwdval);
     this.setError("开始配置");
-    myProcess.configParameter_beacon(beaconId,pwdval, major, minor, rssi, send, tx, setpwdval, function (msg) {
+    myProcess.configParameter_beacon(beaconId, pwdval, major, minor, rssi, send, tx, setpwdval, function (msg) {
       mypage.setMotto(msg)
     }, function (arr) {
       mypage.setData({ motto: "配置完成!" });
-    }) 
+    })
     // myProcess.configParameter_stationNet(mystationId, ipval, maskval, gatewayval, dnsval, sendtoval, staticipval, function (msg) {
     //   mypage.setMotto(msg)
     // }, function (arr) {
@@ -187,13 +246,13 @@ Page({
     //   mypage.setData({ motto: "配置完成!" });
     // }) 
   },
- uint2int:function(num){
-   if (num > 0xff / 2) {
-     var a = ~0xff;
-     num = num | a;
-   }
-   return num;
- },
+  uint2int: function (num) {
+    if (num > 0xff / 2) {
+      var a = ~0xff;
+      num = num | a;
+    }
+    return num;
+  },
   int2uint: function (num) {
     if (num < 0) {
       num = num & 0xff;
@@ -201,19 +260,21 @@ Page({
     return num;
   },
   readParameter: function (e) {
-    if (pwdval.length != 8 ) {
+    this.getParameter()
+  },
+  getParameter:function(){
+    if (pwdval.length != 8) {
       console.log("pwdval error:" + pwdval)
       mypage.setData({ motto: "密码数据有误!" });
       return;
     }
     mypage.setData({ motto: "开始读取..." });
-    console.log(e.detail.value);
     console.log("readParameter");
-    myProcess.syncParameter_beacon(beaconId,pwdval, function (msg) {
+    myProcess.syncParameter_beacon(beaconId, pwdval, function (msg) {
       mypage.setMotto(msg)
-    },function(arr){
+    }, function (arr) {
       console.log(arr);
-      if(arr==null||arr.length<32){
+      if (arr == null || arr.length < 32) {
         console.log("error arr length:" + arr.length);
         return;
       }
@@ -227,9 +288,9 @@ Page({
       var minor = ((arr[12] & 0xff) << 8) | (arr[13] & 0xff);
       var rssi_level = mypage.uint2int(arr[14] & 0xff);
       var tx_power = mypage.uint2int(arr[15] & 0xff);
-      var uuid="";
-      for(var i=0;i<16;i++){
-        uuid += (arr[16+i] & 0xff).toString();
+      var uuid = "";
+      for (var i = 0; i < 16; i++) {
+        uuid += (arr[16 + i] & 0xff).toString();
       }
       console.log("battery:" + battery);
       console.log("hardware:" + hardware);
@@ -241,19 +302,25 @@ Page({
       console.log("tx_power:" + tx_power);
       console.log("uuid:" + uuid);
 
-      mypage.setData({ 
-        majorstr: major+"",
-        minorstr: minor+"",
+      readmajor = major + "";
+      readminor = minor + "";
+      readrssi = rssi_level+"";
+      readtx = tx_power+"";
+      readsend = adv_time+"";
+
+      mypage.setData({
+        majorstr: major + "",
+        minorstr: minor + "",
         uuidstr: uuid,
-        rssistr: rssi_level+"DBm",
-        txstr: tx_power+"DBm",
-        sendstr: adv_time+"毫秒",
-        batterystr: battery+"V",
-        hardwarestr: "V"+hardware,
-        motto:"读取完成!"
-        })
+        rssistr: rssi_level + "DBm",
+        txstr: tx_power + "DBm",
+        sendstr: adv_time + "毫秒",
+        batterystr: battery + "V",
+        hardwarestr: "V" + hardware,
+        motto: "读取完成!"
+      })
     }
     )
-  },
+  }
 
 })

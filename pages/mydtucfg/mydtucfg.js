@@ -4,17 +4,28 @@ var myProcess = require('../../utils/myprocess.js').MyProcess;
 const app = getApp()
 var mypage
 var dtuId
-var pwdval=""
-var setpwdval=""
-var runmodeval =1
-var loramodeval = 0
-var channelval =0
-var sfval = 12
-var powerval = 0
-var baudval = 0
-var sleepval = 1
-var supportval=0
-var askval = ""
+var pwdval
+var setpwdval
+var runmodeval
+var loramodeval
+var channelval
+var sfval 
+var powerval
+var baudval 
+var sleepval 
+var supportval
+var askval
+
+var readrunmodeval
+var readloramodeval
+var readchannelval
+var readsfval
+var readpowerval
+var readbaudval
+var readsleepval
+var readsupportval
+var readaskval
+
 var idval=""
 var mystationId
 //0x78, 0x26, 0x66, 0x78, 0x33, 0x33, 0x78, 0x40, 0x00, 0x78, 0x4c, 0xcc, 0x78, 0x59, 0x99, 0x78, 0x66, 0x66, 0x78, 0x73, 0x33, 0x78, 0x80, 0x00
@@ -66,6 +77,7 @@ Page({
     mypage.setData({
       deviceId: dtuId
      })
+    this.getParameter()
   },
   onLoad: function () {
     mypage = this
@@ -166,8 +178,59 @@ Page({
     })
   },
   updateParameter: function (e) {
-
+    this.setParameter()
     
+    
+  },
+  setParameter: function(){
+
+    // var readrunmodeval
+    // var readloramodeval
+    // var readchannelval
+    // var readsfval
+    // var readpowerval
+    // var readbaudval
+    // var readsleepval
+    // var readsupportval
+    // var readaskval
+    if (runmodeval == null || runmodeval < 0) {
+      console.log("runmodeval is null,use:" + readrunmodeval);
+      runmodeval = readrunmodeval
+    }
+    if (loramodeval == null || loramodeval < 0) {
+      console.log("loramodeval is null,use:" + readloramodeval);
+      loramodeval = readloramodeval
+    }
+    if (channelval == null || channelval < 0) {
+      console.log("channelval is null,use:" + readchannelval);
+      channelval = readchannelval
+    }
+    if (sfval == null || sfval < 0) {
+      console.log("sfval is null,use:" + readsfval);
+      sfval = readsfval
+    }
+    if (powerval == null || myProcess.trim(powerval).length == 0) {
+      console.log("powerval is null,use:" + readpowerval);
+      powerval = readpowerval;
+    }
+    if (baudval == null || myProcess.trim(baudval).length == 0) {
+      console.log("baudval is null,use:" + readbaudval);
+      baudval = readbaudval;
+    }
+    if (sleepval == null || myProcess.trim(sleepval).length == 0) {
+      console.log("sleepval is null,use:" + readsleepval);
+      sleepval = readsleepval;
+    }
+    if (askval == null || myProcess.trim(askval).length == 0) {
+      console.log("askval is null,use:" + readaskval);
+      askval = readaskval;
+    }
+
+    if (supportval == null || myProcess.trim(supportval).length == 0) {
+      console.log("supportval is null,use:" + readsupportval);
+      supportval = readsupportval;
+    }
+
     var power = parseInt(powerval, 10);
     var baudNum = parseInt(baudval, 10);
     var baud = mypage.getArrIndex(baudNum, baudarr);
@@ -175,12 +238,12 @@ Page({
     var support = parseInt(supportval, 10);
 
     mypage.setData({ motto: "开始配置..." });
-    if (isNaN(power)||power<0||power>17) {
+    if (isNaN(power) || power < 0 || power > 17) {
       console.log("power error:" + power)
       mypage.setData({ motto: "发射功率数据有误!" });
       return;
     }
-    if (isNaN(baudNum)||baud<0) {
+    if (isNaN(baudNum) || baud < 0) {
       console.log("baud error:" + baud)
       mypage.setData({ motto: "波特率数据有误!" });
       return;
@@ -195,16 +258,16 @@ Page({
       mypage.setData({ motto: "供电时间数据有误!" });
       return;
     }
-    if (askval.length == 0){
-      if(runmodeval==1){
+    if (askval.length == 0) {
+      if (runmodeval == 1) {
         console.log("askval error:" + askval)
         mypage.setData({ motto: "低功耗模式轮询字符数据有误!" });
         return;
-      }else{
-        askval="01 03 00 00 00 02 C4 0B";
+      } else {
+        askval = "01 03 00 00 00 02 C4 0B";
       }
     }
-    
+
     console.log("runmodeval:" + runmodeval);
     console.log("loramodeval:" + loramodeval);
     console.log("channelval:" + channelval);
@@ -216,15 +279,7 @@ Page({
     console.log("support:" + support);
     console.log("askval:" + askval);
     this.setError("开始配置");
-    // var runmodeval = 0
-    // var loramodeval = 0
-    // var channelval = 0
-    // var sfval = ""
-    // var powerval = 0
-    // var baudval = 0
-    // var sleepval = 1
-    // var supportval = 0
-    // var askval = ""
+
     //configParameter_dtu(deviceId, runmode, loramode, channel, sf, power, baud, sleep, support, ask, msgFunc, reFunc)
     myProcess.configParameter_dtu(dtuId, runmodeval, loramodeval, freStrarr[channelval], sfval, power, baud, sleep, support, askval, function (msg) {
       mypage.setMotto(msg)
@@ -235,12 +290,15 @@ Page({
   readParameter: function (e) {
     mypage.setData({ motto: "开始读取..." });
     console.log(e.detail.value);
+    this.getParameter()
+  },
+  getParameter: function(){
     console.log("readParameter");
     myProcess.syncParameter_dtu(dtuId, function (msg) {
       mypage.setMotto(msg)
-    },function(arr){
+    }, function (arr) {
       console.log(arr);
-      if(arr==null||arr.length<20){
+      if (arr == null || arr.length < 20) {
         console.log("error arr length:" + arr.length);
         return;
       }
@@ -249,27 +307,27 @@ Page({
       battery = battery / 1000;
       var hardware = "V" + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString() + "." + (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString();
 
-      var timeInterval = ((arr[9] & 0xff) << 24) | ((arr[8] & 0xff)<<16) | ((arr[7] & 0xff) << 8) | (arr[6] & 0xff);
-      var fre ="";
+      var timeInterval = ((arr[9] & 0xff) << 24) | ((arr[8] & 0xff) << 16) | ((arr[7] & 0xff) << 8) | (arr[6] & 0xff);
+      var fre = "";
       for (var i = 0; i < 3; i++) {
-        var hex = (arr[10+i] & 0xff).toString(16);
+        var hex = (arr[10 + i] & 0xff).toString(16);
         hex = (hex.length === 1) ? '0' + hex : hex;
-        fre+=hex;
+        fre += hex;
       }
       var freIndex = mypage.getArrIndex(fre, freStrarr);
       var sf = arr[13] & 0xff;
       var power = arr[14] & 0xff;
-      var loramode=arr[15]&0xff;
+      var loramode = arr[15] & 0xff;
       var runmode = arr[16] & 0xff;
       var baud = arr[17] & 0xff;
       var support = arr[18] & 0xff;
       var asknum = arr[19] & 0xff;
       var asklen = new Array(asknum);
       var askbs = new Array(asknum);
-      var ptr=20+asknum;
-      for(var i=0;i<asknum;i++){
-        asklen[i]=arr[20+i]&0xff;
-        if (asklen[i]>0){
+      var ptr = 20 + asknum;
+      for (var i = 0; i < asknum; i++) {
+        asklen[i] = arr[20 + i] & 0xff;
+        if (asklen[i] > 0) {
           var tt = "";
           for (var j = 0; j < asklen[i]; j++) {
             var hex = (arr[ptr] & 0xff).toString(16);
@@ -278,13 +336,13 @@ Page({
             ptr++;
           }
           askbs[i] = tt.substr(0, tt.length - 1);
-        }else{
+        } else {
 
         }
-        
+
       }
 
-      
+
       console.log("battery:" + battery);
       console.log("timeInterval:" + timeInterval);
       console.log("fre:" + fre);
@@ -311,25 +369,34 @@ Page({
       } else {
         lms = "定频模式";
       }
-      
-      mypage.setData({ 
+
+      readrunmodeval = runmode
+      readloramodeval = loramode
+      readchannelval = freIndex
+      readsfval = sf
+      readpowerval = power + ""
+      readbaudval = baudarr[baud] + ""
+      readsleepval = (timeInterval / 1000) +""
+      readsupportval = support+""
+      readaskval = askbs[0]
+
+      mypage.setData({
         runmodestr: rms,
         loramodestr: lms,
-        channelstr: (freIndex+1)+"信道",
-        sfstr: "扩频"+sf,
-        powerstr: power+"DBm",
+        channelstr: (freIndex + 1) + "信道",
+        sfstr: "扩频" + sf,
+        powerstr: power + "DBm",
         baudstr: baudarr[baud],
         supportstr: support + "秒",
-        sleepstr: (timeInterval/1000) + "秒",
+        sleepstr: (timeInterval / 1000) + "秒",
         askstr: askbs[0],
-        batterystr: battery+"V",
-        hardwarestr: "V"+hardware,
-        motto:"读取完成!"
-        })
+        batterystr: battery + "V",
+        hardwarestr: "V" + hardware,
+        motto: "读取完成!"
+      })
     }
     )
   },
-
 
   IDConfigHandler: function (e) {
 

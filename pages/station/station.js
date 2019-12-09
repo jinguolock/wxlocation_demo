@@ -86,8 +86,17 @@ Page({
 
     wx.setStorageSync('configStationId', selectNodeId)
     wx.navigateTo({ url: "../mystationcfg/mystationcfg" })
-  }
+  },
+  toStationadvcfg: function (e) {
+    console.log("toStationadvcfg")
+    clearInterval(intervalid)
+    blueApi.stopSearch();
+    selectNodeId = e.target.dataset.aid;
 
+
+    wx.setStorageSync('configStationId', selectNodeId)
+    wx.navigateTo({ url: "../mystationadvcfg/mystationadvcfg" })
+  },
 
 
   //end method

@@ -7,7 +7,7 @@
 </view>
   <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="items">
   <view class="find-items">
-      <text >定位卡:{{items.deviceName}}</text>
+      <text class="open-text2">定位卡:{{items.deviceName}}</text>
     </view>
     
     <view class="find-items">

@@ -36,14 +36,25 @@ Page({
     intervalid = setInterval(mypage.mytimeout, 500);
     timeIndex = 0;
   },
+  onUnload: function (options) {
+    console.log("onUnload")
+    clearInterval(intervalid)
+    blueApi.stopSearch();
+  },
   onHide: function () {
     console.log("onHide")
     clearInterval(intervalid)
     blueApi.stopSearch();
   },
   onLoad: function (options) {
+    console.log("onLoad")
     // 页面初始化 options为页面跳转所带来的参数
-    
+    let that = this;
+    mypage = this;
+    preId = "";
+    blueApi.searchBleDevices("IS");
+    intervalid = setInterval(mypage.mytimeout, 500);
+    timeIndex = 0;
   },
   idFilterInputEvent: function (e) {
     preId = e.detail.value

@@ -56,6 +56,10 @@
   font-size: 25rpx;
   margin-left: 2rpx;
 }
+.open-button2{
+  font-size: 25rpx;
+  margin-left: 200rpx;
+}
 .rowclass{
   flex-direction: row;
   display: flex;
@@ -67,4 +71,9 @@
 .open-text{
   margin-right: 50rpx;
   margin-top: 5rpx;
+}
+.open-text2{
+  font-size: 30rpx;
+  color:#1a0ba3;
+  font-weight:bold;
 }

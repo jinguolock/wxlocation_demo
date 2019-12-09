@@ -38,7 +38,7 @@
       },
       {
         "pagePath": "pages/station/station",
-        "text": "基站网络配置",
+        "text": "基站配置",
         "iconPath": "images/tab_car_source_def@2x.png",
         "selectedIconPath": "images/tab_car_source_sel@2x.png"
       },

@@ -6,10 +6,18 @@ var mypage
 var locationId
 var intervalval
 var onlineval 
-var maskval="0"
-var valueval="8877"
+var maskval
+var valueval
 var beaconval
 var resetval
+
+var readintervalval
+var readonlineval
+var readmaskval
+var readvalueval
+var readbeaconval
+var readresetval
+
 var mystationId
 
 var staticStrarr = ["未知","动态", "静态"]
@@ -53,6 +61,7 @@ Page({
     mypage.setData({
       deviceId: mystationId
      })
+    this.getParameter()
   },
   onLoad: function () {
     mypage = this
@@ -94,6 +103,35 @@ Page({
     })
   },
   updateParameter: function (e) {
+
+    if (intervalval == null || myProcess.trim(intervalval).length == 0) {
+      console.log("intervalval is null,use:" + readintervalval);
+      intervalval = readintervalval;
+    }
+    if (resetval == null || myProcess.trim(resetval).length == 0) {
+      console.log("resetval is null,use:" + readresetval);
+      resetval = readresetval;
+    }
+    if (onlineval == null || myProcess.trim(onlineval).length == 0) {
+      console.log("onlineval is null,use:" + readonlineval);
+      onlineval = readonlineval;
+    }
+    if (maskval == null || myProcess.trim(maskval).length == 0) {
+      console.log("maskval is null,use:" + readmaskval);
+      maskval = readmaskval;
+    }
+    if (valueval == null || myProcess.trim(valueval).length == 0) {
+      console.log("valueval is null,use:" + readvalueval);
+      valueval = readvalueval;
+    }
+
+    if (beaconval == null || beaconval < 0) {
+      console.log("beaconval is null,use:" + readbeaconval);
+      beaconval = readbeaconval
+    }
+
+
+
     mypage.setData({ motto: "开始配置..." });
     if (beaconval != 1 && beaconval != 0) {
       this.setError("没有选择透传模式！")
@@ -147,14 +185,18 @@ Page({
   },
  
   readParameter: function (e) {
-    mypage.setData({ motto: "开始读取..." });
     console.log(e.detail.value);
+    this.getParameter()
+  },
+  getParameter: function(){
+    mypage.setData({ motto: "开始读取..." });
+
     console.log("readParameter");
     myProcess.syncParameter_station_adv(mystationId, function (msg) {
       mypage.setMotto(msg)
-    },function(arr){
+    }, function (arr) {
       console.log(arr);
-      if(arr==null||arr.length<10){
+      if (arr == null || arr.length < 10) {
         console.log("error arr length:" + arr.length);
         return;
       }
@@ -165,30 +207,39 @@ Page({
       var beaconEnable = (arr[8] & 0xff);
       var onlineThreshold = (arr[9] & 0xff);
       var reset = ((arr[10] & 0xff) << 24) | ((arr[11] & 0xff) << 16) | ((arr[12] & 0xff) << 8) | (arr[13] & 0xff);
-     
-      
+
+
       console.log("beaconMask:" + beaconMask);
       console.log("beaconValue:" + beaconValue);
       console.log("interval:" + interval);
       console.log("beaconEnable:" + beaconEnable);
       console.log("onlineThreshold:" + onlineThreshold);
       console.log("reset:" + reset);
-      
+
       intervalval = interval + ""
       onlineval = onlineThreshold + ""
       maskval = beaconMask.toString(16)
       valueval = beaconValue.toString(16)
-      beaconval=beaconEnable
+      beaconval = beaconEnable
       resetval = reset
-      mypage.setData({ 
+
+
+      readintervalval = intervalval
+      readonlineval = intervalval
+      readmaskval = maskval
+      readvalueval = valueval
+      readbeaconval = beaconval
+      readresetval = resetval
+
+      mypage.setData({
         intervalstr: intervalval,
         onlinestr: onlineval,
-        beaconstr: beaconval == 0 ?  "禁用":"启用",
+        beaconstr: beaconval == 0 ? "禁用" : "启用",
         maskstr: "0x" + maskval,
         valuestr: "0x" + valueval,
-        resetstr: resetval+"秒",
-        motto:"读取完成!"
-        })
+        resetstr: resetval + "秒",
+        motto: "读取完成!"
+      })
     }
     )
   },

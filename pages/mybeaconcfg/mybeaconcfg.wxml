@@ -6,7 +6,7 @@
 
     
   <view class="find-list">
-    <text class="tt-text">配置参数</text>
+    <text class="tt-text">配置使用密码:{{usePwd}}</text>
     <view class="rowclass">
     <text class="open-text">输入密码</text>
     <input name="ip" bindinput="pwdInputEvent"  placeholder="输入配置密码" />
@@ -14,26 +14,32 @@
     <view class="rowclass">
     <text class="open-text">MAJOR</text>
     <input name="mask" bindinput="majorInputEvent"    placeholder="十进制，如:1203" />
+    <!--button style='margin-top: -2px;margin-left: 38px;' bindtap="updateParameter_major"  class="login-btn2">修改MAJ</button-->
     </view>
     <view class="rowclass">
     <text class="open-text">MINOR</text>
     <input name="gateip" bindinput="minorInputEvent"    placeholder="十进制，如:1926" />
+    <!--button style='margin-top: -2px;margin-left: 38px;' bindtap="updateParameter_minor"  class="login-btn2">修改MIN</button-->
     </view>
     <view class="rowclass">
     <text class="open-text">RSSI校准</text>
     <input name="sendto" bindinput="rssiInputEvent"    placeholder="RSSI较准,如:-32" />
+    <!--button style='margin-top: -2px;margin-left: 30px;' bindtap="updateParameter_rssi"  class="login-btn2">修改校准</button-->
     </view>
     <view class="rowclass">
     <text class="open-text">发送功率</text>
     <input name="sendto" bindinput="txInputEvent"    placeholder="发送功率 ,如:4,0,-4,-8,-16等" />
+    <!--button style='margin-top: -2px;margin-left: 30px;' bindtap="updateParameter_tx"  class="login-btn2">修改功率</button-->
     </view>
     <view class="rowclass">
     <text class="open-text">广播间隔</text>
     <input name="sendto" bindinput="sendInputEvent"    placeholder="毫秒，如200" />
+    <!--button style='margin-top: -2px;margin-left: 30px;' bindtap="updateParameter_send"  class="login-btn2">修改间隔</button-->
     </view>
     <view class="rowclass">
     <text class="open-text">修改密码</text>
     <input name="sendto" bindinput="setpwdInputEvent"    placeholder="8个数字，如12345678" />
+    <!--button style='margin-top: -2px;margin-left: 30px;' bindtap="updateParameter_pwd"  class="login-btn2">修改密码</button-->
     </view>
     <!--view class="rowclass">
     <text class="open-text">协议类型</text>

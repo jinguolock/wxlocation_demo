@@ -68,3 +68,8 @@
   margin-right: 50rpx;
   margin-top: 5rpx;
 }
+.open-text2{
+  font-size: 30rpx;
+  color:#1a0ba3;
+  font-weight:bold;
+}

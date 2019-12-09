@@ -6,7 +6,7 @@
 
     
   <view class="find-list">
-    <text class="tt-text">配置UUID</text>
+    <text class="tt-text">配置使用密码:{{usePwd}}</text>
     <view class="rowclass">
     <text class="open-text">输入密码</text>
     <input name="ip" bindinput="pwdInputEvent"  placeholder="输入配置密码" />

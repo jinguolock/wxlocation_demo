@@ -42,6 +42,16 @@
   margin: 100rpx 20rpx 20rpx 20rpx;
   width: 150rpx;
 }
+.login-btn2{
+  background: #003D79;
+  border: 0;
+  color: #fff;
+  font-size: 24rpx;
+  padding: 0rpx;
+  margin: 0rpx;
+  height: 60rpx;
+  width: 120rpx;
+}
 .forget-reg{
   font-size: 24rpx;
   color: #ec6238;

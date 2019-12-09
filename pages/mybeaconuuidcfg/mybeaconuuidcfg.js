@@ -5,10 +5,16 @@ const app = getApp()
 var mypage
 var beaconId
 var pwdval=""
-var uuid18val = ""
-var uuid916val = ""
-var uuid1724val = ""
-var uuid2532val = ""
+var uuid18val 
+var uuid916val 
+var uuid1724val 
+var uuid2532val 
+
+var readuuid18val 
+var readuuid916val 
+var readuuid1724val
+var readuuid2532val
+
 var uuid18str=""
 var uuid916str = ""
 var uuid1724str = ""
@@ -29,6 +35,7 @@ Page({
     sendstr:"",
     batterystr: "",
     hardwarestr:"",
+    usePwd: "",
     motto:""
   },
   //事件处理函数
@@ -54,15 +61,26 @@ Page({
     //blueApi.searchBleDevices();
    // intervalid = setInterval(mypage.mytimeout, 1000);
     beaconId = wx.getStorageSync('configBeaconId')
+    var up = wx.getStorageSync('configBeaconPwd')
     console.log("my beaconId:" + beaconId)
     if (pwdval==null||pwdval.length==0){
      // pwdval = beaconId
       pwdval = beaconId.substr(2)
     }
-    
+    if (up != null && up.length > 0) {
+      mypage.setData({
+        usePwd: up
+      })
+      pwdval = up
+    } else {
+      mypage.setData({
+        usePwd: beaconId.substr(2)
+      })
+    }
     mypage.setData({
       deviceId: beaconId
      })
+    that.getParameter()
   },
   onLoad: function () {
     mypage = this
@@ -84,6 +102,18 @@ Page({
   },
   pwdInputEvent:function(e){
     pwdval=e.detail.value
+    wx.setStorageSync('configBeaconPwd', pwdval)
+    if (pwdval != null && pwdval.length > 0) {
+
+      mypage.setData({
+        usePwd: pwdval
+      })
+    } else {
+      pwdval = beaconId.substr(2)
+      mypage.setData({
+        usePwd: beaconId.substr(2)
+      })
+    }
   },
   uuid18InputEvent: function (e) {
     uuid18val = e.detail.value
@@ -105,6 +135,29 @@ Page({
     })
   },
   updateParameter: function (e) {
+
+    // readuuid18val = uuid.substr(0, 8)
+    // readuuid916val = uuid.substr(8, 8)
+    // readuuid1724val = uuid.substr(16, 8)
+    // readuuid2532val = uuid.substr(24, 8)
+
+    if (uuid18val == null || myProcess.trim(uuid18val).length == 0) {
+      console.log("uuid18val is null,use:" + readuuid18val);
+      uuid18val = readuuid18val;
+    }
+    if (uuid916val == null || myProcess.trim(uuid916val).length == 0) {
+      console.log("uuid916val is null,use:" + readuuid916val);
+      uuid916val = readuuid916val;
+    }
+    if (uuid1724val == null || myProcess.trim(uuid1724val).length == 0) {
+      console.log("uuid1724val is null,use:" + readuuid1724val);
+      uuid1724val = readuuid1724val;
+    }
+    if (uuid2532val == null || myProcess.trim(uuid2532val).length == 0) {
+      console.log("uuid2532val is null,use:" + readuuid2532val);
+      uuid2532val = readuuid2532val;
+    }
+
     if (uuid18val.length != 8) {
       console.log("uuid18val error:" + uuid18val + ";")
       mypage.setData({ motto: "UUID 1~8位数不对!" });
@@ -175,14 +228,17 @@ Page({
       mypage.setData({ motto: "密码数据有误!" });
       return;
     }
+   // console.log(e.detail.value);
+    this.getParameter()
+  },
+  getParameter: function(){
     mypage.setData({ motto: "开始读取..." });
-    console.log(e.detail.value);
     console.log("readParameter");
-    myProcess.syncParameter_beacon(beaconId,pwdval, function (msg) {
+    myProcess.syncParameter_beacon(beaconId, pwdval, function (msg) {
       mypage.setMotto(msg)
-    },function(arr){
+    }, function (arr) {
       console.log(arr);
-      if(arr==null||arr.length<32){
+      if (arr == null || arr.length < 32) {
         console.log("error arr length:" + arr.length);
         return;
       }
@@ -196,14 +252,14 @@ Page({
       var minor = ((arr[12] & 0xff) << 8) | (arr[13] & 0xff);
       var rssi_level = mypage.uint2int(arr[14] & 0xff);
       var tx_power = mypage.uint2int(arr[15] & 0xff);
-      var uuid="";
-      for(var i=0;i<16;i++){
-        var str = arr[i+16];
+      var uuid = "";
+      for (var i = 0; i < 16; i++) {
+        var str = arr[i + 16];
         var hex = (str & 0xff).toString(16);
         hex = (hex.length === 1) ? '0' + hex : hex;
         uuid += hex;
       }
-      
+
 
       console.log("battery:" + battery);
       console.log("hardware:" + hardware);
@@ -215,15 +271,21 @@ Page({
       console.log("tx_power:" + tx_power);
       console.log("uuid:" + uuid);
 
-      mypage.setData({ 
-        uuid18str: uuid.substr(0, 8),
-        uuid916str: uuid.substr(8, 8),
-        uuid1724str: uuid.substr(16, 8),
-        uuid2532str: uuid.substr(24, 8),
-        motto:"读取完成!"
-        })
+      readuuid18val = uuid.substr(0, 8)
+      readuuid916val = uuid.substr(8, 8)
+      readuuid1724val = uuid.substr(16, 8)
+      readuuid2532val = uuid.substr(24, 8)
+
+
+
+      mypage.setData({
+        uuid18str: uuid.substr(0, 4) + "-" + uuid.substr(4, 4),
+        uuid916str: uuid.substr(8, 4) + "-" + uuid.substr(12, 4),
+        uuid1724str: uuid.substr(16, 4) + "-" + uuid.substr(20, 4),
+        uuid2532str: uuid.substr(24, 4) + "-" + uuid.substr(28, 4),
+        motto: "读取完成!"
+      })
     }
     )
-  },
-
+  }
 })

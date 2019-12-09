@@ -82,7 +82,6 @@
     <text class="open-text">当前状态</text>
     <text class="pp-text">{{statusstr}}</text>
     </view>
-    
     <!-- <view class="rowclass">
     <text class="open-text">服务端口</text>
     <text class="pp-text">{{serverportstr}}</text>

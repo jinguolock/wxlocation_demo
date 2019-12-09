@@ -37,26 +37,24 @@ Page({
   },
   onShow: function () {
     console.log("location onShow")
-    let that = this;
-    mypage = this;
-    preId="";
-    blueApi.searchBleDevices2("IB","IR");
-
-    //blueApi.searchBleDevicesBeacon()
-   // blueApi.searchBeacon()
-
-    timeIndex = 0;
-    intervalid = setInterval(mypage.mytimeout, 1000);
+    
   },
   onHide: function () {
     console.log("onHide")
-    clearInterval(intervalid)
-    blueApi.stopSearch();
   },
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
+    console.log("onLoad")
     let that = this;
     mypage = this;
+    preId = "";
+    blueApi.searchBleDevices2("IB", "IR");
+
+    //blueApi.searchBleDevicesBeacon()
+    // blueApi.searchBeacon()
+
+    timeIndex = 0;
+    intervalid = setInterval(mypage.mytimeout, 1000);
     // myApi.webmain("datalist", "lock_node", null, function (obj) {
     //   console.log(obj)
     //   locklist = obj
@@ -68,6 +66,11 @@ Page({
     // })
 
   },
+  onUnload: function (options) {
+    console.log("onUnload")
+    clearInterval(intervalid)
+    blueApi.stopSearch();
+  },
   idFilterInputEvent: function (e) {
     preId = e.detail.value
   },
@@ -75,6 +78,14 @@ Page({
     var obj = new Object();
     obj[selectNodeId] = str;
     mypage.setData({ motto: obj })
+  },
+  toflush: function (e) {
+    //clearInterval(intervalid)
+    blueApi.stopSearch();
+    timeIndex = 0;
+    blueApi.stopSearch();
+    blueApi.searchBleDevices2("IB", "IR");
+    
   },
   tocfg: function (e) {
 

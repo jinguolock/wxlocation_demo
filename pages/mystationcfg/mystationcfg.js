@@ -4,12 +4,26 @@ var myProcess = require('../../utils/myprocess.js').MyProcess;
 const app = getApp()
 var mypage
 var locationId
-var ipval ="192.168.1.98"
-var maskval ="255.255.255.0"
-var gatewayval = "192.168.1.1"
-var dnsval = "192.168.1.1"
-var sendtoval = "0.0.0.0"
-var staticipval = 1
+// var ipval ="192.168.1.98"
+// var maskval ="255.255.255.0"
+// var gatewayval = "192.168.1.1"
+// var dnsval = "192.168.1.1"
+// var sendtoval = "0.0.0.0"
+// var staticipval = 1
+var ipval 
+var maskval 
+var gatewayval 
+var dnsval 
+var sendtoval 
+var staticipval = -1
+
+var readipval
+var readmaskval
+var readgatewayval
+var readdnsval
+var readsendtoval
+var readstaticipval = -1
+
 var tcpval
 var mystationId
 
@@ -61,6 +75,7 @@ Page({
     mypage.setData({
       deviceId: mystationId
      })
+    this.getParameter()
   },
   onLoad: function () {
     mypage = this
@@ -112,7 +127,37 @@ Page({
     })
   },
   updateParameter: function (e) {
-    mypage.setData({ motto: "开始配置..." });
+    // var readipval
+    // var readmaskval
+    // var readgatewayval
+    // var readdnsval
+    // var readsendtoval
+    // var readstaticipval = -1
+    if (ipval == null || myProcess.trim(ipval).length == 0) {
+      console.log("ipval is null,use:" + readipval);
+      ipval = readipval;
+    }
+    if (maskval == null || myProcess.trim(maskval).length == 0) {
+      console.log("maskval is null,use:" + readmaskval);
+      maskval = readmaskval;
+    }
+    if (gatewayval == null || myProcess.trim(gatewayval).length == 0) {
+      console.log("gatewayval is null,use:" + readgatewayval);
+      gatewayval = readgatewayval;
+    }
+    if (dnsval == null || myProcess.trim(dnsval).length == 0) {
+      console.log("dnsval is null,use:" + readdnsval);
+      dnsval = readdnsval;
+    }
+    if (sendtoval == null || myProcess.trim(sendtoval).length == 0) {
+      console.log("sendtoval is null,use:" + readsendtoval);
+      sendtoval = readsendtoval;
+    }
+    if (staticipval == null || staticipval < 0) {
+      console.log("staticipval is null,use:" + readstaticipval);
+      staticipval = readstaticipval
+    }
+
     if (staticipval != 1 && staticipval != 2) {
       this.setError("没有选择是否DHCP！")
       return
@@ -158,7 +203,7 @@ Page({
     }
 
     
-    
+    mypage.setData({ motto: "开始配置..." });
     this.setError("开始配置");
 
     myProcess.configParameter_stationNet(mystationId, ipval, maskval, gatewayval, dnsval, sendtoval, staticipval, function (msg) {
@@ -181,21 +226,25 @@ Page({
   },
  
   readParameter: function (e) {
-    mypage.setData({ motto: "开始读取..." });
     console.log(e.detail.value);
+    this.getParameter()
+  },
+  getParameter: function(){
+    mypage.setData({ motto: "开始读取..." });
+
     console.log("readParameter");
     myProcess.syncParameter_station(mystationId, function (msg) {
       mypage.setMotto(msg)
-    },function(arr){
+    }, function (arr) {
       console.log(arr);
-      if(arr==null||arr.length<56){
+      if (arr == null || arr.length < 56) {
         console.log("error arr length:" + arr.length);
         return;
       }
 
-      var hardware = "V" + (arr[0] & 0xff).toString() + "." + (arr[1] & 0xff).toString() + "." + (arr[2] & 0xff).toString()+"." + (arr[3] & 0xff).toString();
+      var hardware = "V" + (arr[0] & 0xff).toString() + "." + (arr[1] & 0xff).toString() + "." + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString();
 
-      var myIp =  (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString() + "." + (arr[6] & 0xff).toString() + "." + (arr[7] & 0xff).toString();
+      var myIp = (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString() + "." + (arr[6] & 0xff).toString() + "." + (arr[7] & 0xff).toString();
       var myMask = (arr[8] & 0xff).toString() + "." + (arr[9] & 0xff).toString() + "." + (arr[10] & 0xff).toString() + "." + (arr[11] & 0xff).toString();
       var myGW = (arr[12] & 0xff).toString() + "." + (arr[13] & 0xff).toString() + "." + (arr[14] & 0xff).toString() + "." + (arr[15] & 0xff).toString();
       var myDns = (arr[16] & 0xff).toString() + "." + (arr[17] & 0xff).toString() + "." + (arr[18] & 0xff).toString() + "." + (arr[19] & 0xff).toString();
@@ -208,29 +257,29 @@ Page({
       var runingDns = (arr[38] & 0xff).toString() + "." + (arr[39] & 0xff).toString() + "." + (arr[40] & 0xff).toString() + "." + (arr[41] & 0xff).toString();
 
       var sendtoIp = (arr[42] & 0xff).toString() + "." + (arr[43] & 0xff).toString() + "." + (arr[44] & 0xff).toString() + "." + (arr[45] & 0xff).toString();
-      var serverPort = ((arr[47]&0xff)<<8)|(arr[46]&0xff);
+      var serverPort = ((arr[47] & 0xff) << 8) | (arr[46] & 0xff);
       var serverTcpPort = ((arr[49] & 0xff) << 8) | (arr[48] & 0xff);
 
-      var isStatic=arr[50]&0xff;
-      var isUdp=arr[51]&0xff;
+      var isStatic = arr[50] & 0xff;
+      var isUdp = arr[51] & 0xff;
 
       var myLocalPort = ((arr[53] & 0xff) << 8) | (arr[52] & 0xff);
       var mystatus = arr[54] & 0xff;
-      var urlLen=arr[55]&0xff;
-      var url="";
-      if(urlLen>0){
-        for(var i=0;i<urlLen;i++){
-          url+=new String(arr[56+i]);
+      var urlLen = arr[55] & 0xff;
+      var url = "";
+      if (urlLen > 0) {
+        for (var i = 0; i < urlLen; i++) {
+          url += new String(arr[56 + i]);
         }
       }
-      var statusstr="";
-      if(mystatus==1){
-        statusstr="网口无响应,无法配置！";
+      var statusstr = "";
+      if (mystatus == 1) {
+        statusstr = "网口无响应,无法配置！";
       } else if (mystatus == 2) {
         statusstr = "网口芯片正常,获取地址失败！";
       } else if (mystatus == 3) {
         statusstr = "正常运行中！";
-      }  else if (mystatus == 0) {
+      } else if (mystatus == 0) {
         statusstr = "1301初始化失败！";
       } else if (mystatus == 4) {
         statusstr = "DHCP失败,静态地址运行中！";
@@ -239,8 +288,8 @@ Page({
       } else if (mystatus == 6) {
         statusstr = "URL访问失败，无法推送数据！";
       }
-      
-      console.log("hardware:"+hardware);
+
+      console.log("hardware:" + hardware);
       console.log("myIp:" + myIp);
       console.log("myMask:" + myMask);
       console.log("myGW:" + myGW);
@@ -260,21 +309,29 @@ Page({
       console.log("urlLen:" + urlLen);
       console.log("url:" + url);
 
-      mypage.setData({ 
+
+      readipval = myIp
+      readmaskval = myMask
+      readgatewayval = myGW
+      readdnsval = myDns
+      readsendtoval = sendtoIp
+      readstaticipval = isStatic
+
+      mypage.setData({
         ipstr: runingIp,
         maskstr: runingMask,
         gatewaystr: runingGW,
         sendipstr: sendtoIp,
         dnsstr: runingDns,
-        staticipstr: isStatic == 1 ?  "静态":"动态",
+        staticipstr: isStatic == 1 ? "静态" : "动态",
         tcpstr: isUdp == 1 ? "UDP" : "TCP",
         macstr: myMac,
-        serverportstr: serverPort+"",
-        localportstr: myLocalPort+"",
+        serverportstr: serverPort + "",
+        localportstr: myLocalPort + "",
         hardwarestr: hardware,
         statusstr: statusstr,
-        motto:"读取完成!"
-        })
+        motto: "读取完成!"
+      })
     }
     )
   },

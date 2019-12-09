@@ -13,8 +13,18 @@ var beaconValue
 var thresValue
 var cancelValue
 var advIntervalValue
-var loraenableValue=1
-var cancelAlarmValue=10
+var loraenableValue=-1
+var cancelAlarmValue=-1
+
+var readsendInterval
+var readsendTime
+var readbeaconMask
+var readbeaconValue
+var readthresValue
+var readcancelValue
+var readadvIntervalValue
+var readloraenableValue 
+var readcancelAlarmValue 
 Page({
   data: {
     deviceId: "",
@@ -79,6 +89,7 @@ Page({
     mypage.setData({
       deviceId: locationId
     })
+    this.getParameter()
   },
   onLoad: function () {
     mypage = this
@@ -141,11 +152,59 @@ Page({
   },
   updateParameter: function (e) {
     mypage.setData({ motto: "开始配置..." });
-    if (sendInterval == null || sendTime == null || beaconMask == null || beaconValue == null ){
+
+    // var readsendInterval
+    // var readsendTime
+    // var readbeaconMask
+    // var readbeaconValue
+    // var readthresValue
+    // var readcancelValue
+    // var readadvIntervalValue
+    // var readloraenableValue
+    // var readcancelAlarmValue 
+
+    if (sendInterval == null || myProcess.trim(sendInterval).length==0){
+      console.log("sendInterval is null,use:" + readsendInterval);
+      sendInterval = readsendInterval;
+    }
+    if (sendTime == null || myProcess.trim(sendTime).length == 0) {
+      console.log("sendTime is null,use:" + readsendTime);
+      sendTime = readsendTime;
+    }
+    if (beaconMask == null || myProcess.trim(beaconMask).length == 0) {
+      console.log("beaconMask is null,use:" + readbeaconMask);
+      beaconMask = readbeaconMask;
+    }
+    if (beaconValue == null || myProcess.trim(beaconValue).length == 0) {
+      console.log("beaconValue is null,use:" + readbeaconValue);
+      beaconValue = readbeaconValue;
+    }
+    if (thresValue == null || myProcess.trim(thresValue).length == 0) {
+      console.log("thresValue is null,use:" + readthresValue);
+      thresValue = readthresValue;
+    }
+    if (advIntervalValue == null || myProcess.trim(advIntervalValue).length == 0) {
+      console.log("advIntervalValue is null,use:" + readadvIntervalValue);
+      advIntervalValue = readadvIntervalValue;
+    }
+    if (cancelValue == null || cancelValue<0){
+      console.log("cancelValue is null,use:" + readcancelValue);
+      cancelValue = readcancelValue
+    }
+    if (loraenableValue == null || loraenableValue < 0) {
+      console.log("loraenableValue is null,use:" + readloraenableValue);
+      loraenableValue = readloraenableValue
+    }
+    var alarmnumber=10;
+    if (readcancelAlarmValue != null && readcancelAlarmValue>0){
+      alarmnumber = readcancelAlarmValue;
+    }
+    if (sendInterval == null || sendTime == null || beaconMask == null || beaconValue == null || thresValue == null || advIntervalValue==null){
       console.log("data error")
       mypage.setData({motto: "数据不完整!"});
       return;
     }
+
     var sendIntVal = parseInt(sendInterval,10);
     var sendTimeVal = parseInt(sendTime, 10);
     var beaconMaskVal = parseInt(beaconMask, 16);
@@ -157,7 +216,7 @@ Page({
       mypage.setData({ motto: "发送间隔数据有误!" });
       return;
     }
-    if (!(sendTimeVal > 4)) {
+    if (!(sendTimeVal > 0)) {
       console.log("sendTimeVal error:" + sendTimeVal)
       mypage.setData({ motto: "静止发送时间数据有误!" });
       return;
@@ -194,7 +253,7 @@ Page({
       return;
     }
 
-    myProcess.configParameter2(locationId, sendIntVal, sendTimeVal, beaconMaskVal, beaconValueVal, thresValueVal, cancelValue, advIntervalVal, loraenableValue,function (msg){
+    myProcess.configParameter2(locationId, sendIntVal, sendTimeVal, beaconMaskVal, beaconValueVal, thresValueVal, cancelValue, advIntervalVal, loraenableValue, alarmnumber,function (msg){
       mypage.setMotto(msg)
     }, function (arr) {
       mypage.setData({ motto: "配置完成!" });
@@ -202,12 +261,15 @@ Page({
   },
  
   readParameter: function (e) {
+    this.getParameter()
+  },
+  getParameter:function(){
     console.log("readParameter:" + locationId);
     mypage.setData({ motto: "开始读取..." });
     myProcess.syncParameter(locationId, function (msg) {
       mypage.setMotto(msg)
-    },function(arr){
-      if(arr!=null&&arr.length==19){
+    }, function (arr) {
+      if (arr != null && arr.length == 19) {
         var battery = ((arr[0] & 0xff) << 8) | (arr[1] & 0xff);
         battery = battery / 1000;
         var hardware = "V" + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString() + "." + (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString();
@@ -218,16 +280,23 @@ Page({
         var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
         var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
         var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
+
+        
+        readsendInterval = sendInterval+"";
+        readsendTime = sendTime+"";
+        readbeaconMask = beaconMask.toString(16) + "";
+        readbeaconValue = beaconValue.toString(16) + "";
+
         mypage.setData({
-          sendIntervalstr: sendInterval+"秒",
-          sendTimestr: sendTime+"秒",
-          batterystr: battery+"V",
+          sendIntervalstr: sendInterval + "秒",
+          sendTimestr: sendTime + "秒",
+          batterystr: battery + "V",
           hardwarestr: hardware,
-          maskstr:"0x"+ beaconMask,
-          beaconstr: "0x"+ beaconValue,
+          maskstr: "0x" + beaconMask,
+          beaconstr: "0x" + beaconValue,
           motto: "读取完成!"
         })
-      } else if(arr != null && arr.length == 23){
+      } else if (arr != null && arr.length == 23) {
         var battery = ((arr[0] & 0xff) << 8) | (arr[1] & 0xff);
         battery = battery / 1000;
         var hardware = "V" + (arr[2] & 0xff).toString() + "." + (arr[3] & 0xff).toString() + "." + (arr[4] & 0xff).toString() + "." + (arr[5] & 0xff).toString();
@@ -238,7 +307,14 @@ Page({
         var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
         var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
         var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
-        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) || ((arr[20] & 0xff) << 8) || (arr[19] & 0xff);
+        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) | ((arr[20] & 0xff) << 8) | (arr[19] & 0xff);
+
+        readsendInterval = sendInterval + "";
+        readsendTime = sendTime + "";
+        readbeaconMask = beaconMask.toString(16) + "";
+        readbeaconValue = beaconValue.toString(16) + "";
+        readthresValue = accThres+"";
+
         mypage.setData({
           sendIntervalstr: sendInterval + "秒",
           sendTimestr: sendTime + "秒",
@@ -247,7 +323,7 @@ Page({
           maskstr: "0x" + beaconMask.toString(16),
           beaconstr: "0x" + beaconValue.toString(16),
           thresstr: "" + accThres,
-          alarmstr: alarmNum+"次",
+          alarmstr: alarmNum + "次",
           motto: "读取完成!"
         })
       } else if (arr != null && arr.length == 25) {
@@ -261,18 +337,26 @@ Page({
         var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
         var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
         var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
-        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) || ((arr[20] & 0xff) << 8) || (arr[19] & 0xff);
+        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) | ((arr[20] & 0xff) << 8) | (arr[19] & 0xff);
 
         cancelValue = arr[23] & 0xff;
         cancelAlarmValue = arr[24] & 0xff;
-        var alarmTypeStr="";
-        if (cancelValue==0){
-          alarmTypeStr="无法取消";
+        var alarmTypeStr = "";
+        if (cancelValue == 0) {
+          alarmTypeStr = "无法取消";
         } else if (cancelValue == 1) {
           alarmTypeStr = "连按5下取消";
         } else if (cancelValue == 2) {
-          alarmTypeStr = "发送" + cancelAlarmValue+"次后取消";
-        } 
+          alarmTypeStr = "发送" + cancelAlarmValue + "次后取消";
+        }
+
+        readsendInterval = sendInterval + "";
+        readsendTime = sendTime + "";
+        readbeaconMask = beaconMask.toString(16) + "";
+        readbeaconValue = beaconValue.toString(16) + "";
+        readthresValue = accThres + "";
+        readcancelValue = cancelValue;
+        readcancelAlarmValue = cancelAlarmValue+"";
 
         mypage.setData({
           sendIntervalstr: sendInterval + "秒",
@@ -297,12 +381,11 @@ Page({
         var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
         var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
         var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
-        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) || ((arr[20] & 0xff) << 8) || (arr[19] & 0xff);
+        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) | ((arr[20] & 0xff) << 8) | (arr[19] & 0xff);
 
         cancelValue = arr[23] & 0xff;
         cancelAlarmValue = arr[24] & 0xff;
-
-        var advInterval = ((arr[28] & 0xff) << 24) | ((arr[27] & 0xff) << 16) || ((arr[26] & 0xff) << 8) || (arr[25] & 0xff);
+        var advInterval = ((arr[28] & 0xff) << 24) | ((arr[27] & 0xff) << 16) | ((arr[26] & 0xff) << 8) | (arr[25] & 0xff);
         loraenableValue = arr[29] & 0xff;
         var alarmTypeStr = "";
         if (cancelValue == 0) {
@@ -312,14 +395,23 @@ Page({
         } else if (cancelValue == 2) {
           alarmTypeStr = "发送" + cancelAlarmValue + "次后取消";
         }
-        var lorastr="";
+        var lorastr = "";
         if (loraenableValue == 0) {
           lorastr = "禁用";
         } else if (loraenableValue == 1) {
           lorastr = "启用";
-        } 
-        // advIntervalstr: "",
-        //   loraenablestr: "",
+        }
+
+        readsendInterval = sendInterval + "";
+        readsendTime = sendTime + "";
+        readbeaconMask = beaconMask.toString(16) + "";
+        readbeaconValue = beaconValue.toString(16) + "";
+        readthresValue = accThres + "";
+        readcancelValue = cancelValue;
+        readcancelAlarmValue = cancelAlarmValue + "";
+        readadvIntervalValue = advInterval+"";
+        readloraenableValue = loraenableValue;
+
         mypage.setData({
           sendIntervalstr: sendInterval + "秒",
           sendTimestr: sendTime + "秒",
@@ -330,7 +422,7 @@ Page({
           thresstr: "" + accThres,
           alarmstr: alarmNum + "次",
           cancelalarmstr: alarmTypeStr,
-          advIntervalstr: advInterval+"ms",
+          advIntervalstr: advInterval + "ms",
           loraenablestr: lorastr,
           motto: "读取完成!"
         })
@@ -345,12 +437,12 @@ Page({
         var bleScan = ((arr[11] & 0xff) << 8) | (arr[12] & 0xff);
         var beaconMask = ((arr[15] & 0xff) << 8) | (arr[16] & 0xff);
         var beaconValue = ((arr[17] & 0xff) << 8) | (arr[18] & 0xff);
-        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) || ((arr[20] & 0xff) << 8) || (arr[19] & 0xff);
+        var alarmNum = ((arr[22] & 0xff) << 24) | ((arr[21] & 0xff) << 16) | ((arr[20] & 0xff) << 8) | (arr[19] & 0xff);
 
         cancelValue = arr[23] & 0xff;
         cancelAlarmValue = arr[24] & 0xff;
 
-        var advInterval = ((arr[28] & 0xff) << 24) | ((arr[27] & 0xff) << 16) || ((arr[26] & 0xff) << 8) || (arr[25] & 0xff);
+        var advInterval = ((arr[28] & 0xff) << 24) | ((arr[27] & 0xff) << 16) | ((arr[26] & 0xff) << 8) | (arr[25] & 0xff);
         loraenableValue = arr[29] & 0xff;
         var mode = arr[30] & 0xff;
 
@@ -368,14 +460,24 @@ Page({
         } else if (loraenableValue == 1) {
           lorastr = "启用";
         }
-        var modestr="";
+        var modestr = "";
         if (mode == 2) {
           modestr = "胸牌模式";
         } else if (mode == 4) {
           modestr = "锚点模式";
-        }else{
+        } else {
           modestr = "未知";
         }
+
+        readsendInterval = sendInterval + "";
+        readsendTime = sendTime + "";
+        readbeaconMask = beaconMask.toString(16) + "";
+        readbeaconValue = beaconValue.toString(16) + "";
+        readthresValue = accThres + "";
+        readcancelValue = cancelValue;
+        readcancelAlarmValue = cancelAlarmValue + "";
+        readadvIntervalValue = advInterval + "";
+        readloraenableValue = loraenableValue;
 
         // advIntervalstr: "",
         //   loraenablestr: "",
@@ -394,13 +496,12 @@ Page({
           runmodestr: modestr,
           motto: "读取完成!"
         })
-      }else{
+      } else {
         console.log("error arr length:" + arr.length);
         return;
       }
-      
+
     }
     )
-  },
-
+  }
 })

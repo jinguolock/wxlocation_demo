@@ -41,7 +41,7 @@ Page({
     mypage = this;
     preId = "";
     blueApi.searchBleDevices("IU");
-    timeIndex=0;
+    timeIndex = 0;
     intervalid = setInterval(mypage.mytimeout, 500);
   },
   onHide: function () {
@@ -51,18 +51,19 @@ Page({
   },
   onLoad: function (options) {
     // 页面初始化 options为页面跳转所带来的参数
+    console.log("onLoad")
     let that = this;
     mypage = this;
-    // myApi.webmain("datalist", "lock_node", null, function (obj) {
-    //   console.log(obj)
-    //   locklist = obj
+    preId = "";
+    blueApi.searchBleDevices("IU");
+    timeIndex = 0;
+    intervalid = setInterval(mypage.mytimeout, 500);
 
-    //   that.setData({
-    //     findList: locklist
-    //   })
-    //   // that.setMotto("ok")
-    // })
-
+  },
+  onUnload: function (options) {
+    console.log("onUnload")
+    clearInterval(intervalid)
+    blueApi.stopSearch();
   },
   idFilterInputEvent: function (e) {
     preId = e.detail.value
@@ -73,7 +74,7 @@ Page({
     mypage.setData({ motto: obj })
   },
   tocfg: function (e) {
-    
+
     clearInterval(intervalid)
     blueApi.stopSearch();
     selectNodeId = e.target.dataset.aid;
@@ -81,22 +82,22 @@ Page({
     wx.setStorageSync('configDtuId', selectNodeId)
     wx.navigateTo({ url: "../mydtucfg/mydtucfg" })
   },
-   mytimeout: function () {
-     var list = blueApi.getStationNameRssi();
-     if (preId != null && preId.length > 0) {
-       var rssi = parseInt(preId, 10);
-       if (!(isNaN(rssi))) {
-         var li = new Array();
-         for (let i in list) {
-           var deviceRssi = parseInt(list[i].rssi, 10);
-           if (!(isNaN(deviceRssi)) && (deviceRssi > rssi)) {
-             li.push(list[i]);
-           }
-         }
-         this.setData({
-           findList: li
-         })
-       }
+  mytimeout: function () {
+    var list = blueApi.getStationNameRssi();
+    if (preId != null && preId.length > 0) {
+      var rssi = parseInt(preId, 10);
+      if (!(isNaN(rssi))) {
+        var li = new Array();
+        for (let i in list) {
+          var deviceRssi = parseInt(list[i].rssi, 10);
+          if (!(isNaN(deviceRssi)) && (deviceRssi > rssi)) {
+            li.push(list[i]);
+          }
+        }
+        this.setData({
+          findList: li
+        })
+      }
       //  var li = new Array();
       //  for (let i in list) {
       //    if (list[i].deviceName.indexOf(preId) == 2) {
@@ -106,14 +107,14 @@ Page({
       //  this.setData({
       //    findList: li
       //  })
-     } else {
-       this.setData({
-         findList: list
-       })
-     }
-     timeIndex++;
-     if (timeIndex>=60){
-       timeIndex=0;
+    } else {
+      this.setData({
+        findList: list
+      })
+    }
+    timeIndex++;
+    if (timeIndex >= 60) {
+      timeIndex = 0;
       blueApi.stopSearch();
       blueApi.searchBleDevices("IU");
     }

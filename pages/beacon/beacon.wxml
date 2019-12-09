@@ -3,18 +3,23 @@
   <view class="rowclass">
     <text class="open-text">rssi过滤</text>
     <input name="id_filter" bindinput="idFilterInputEvent"   auto-focus placeholder="输入rssi" />
+    <button bindtap="toflush" class="open-button2" type='primary'>刷新 </button>
     </view>
 </view>
   <view class="find-list" wx:for="{{findList}}" wx:key="{{index}}" wx:for-item="items">
   <view class="find-items">
       <!--text >major:{{items.major}} minor:{{items.minor}}</text-->
-      <text >锚点:{{items.deviceName}} </text>
+      <text class="open-text2">锚点:{{items.deviceName}}</text>
+    </view>
+    <view class="find-items">
+      <!--text >major:{{items.major}} minor:{{items.minor}}</text-->
+      <text >MAJOR:{{items.major}} MINOR:{{items.minor}} 发送周期:{{items.txtime}}ms 发送功率:{{items.txpower}}DB </text>
     </view>
     
     <view class="find-items">
       <button data-aid="{{items.deviceName}}" bindtap="tocfg" class="open-button" type='primary'>参数配置 </button>
       <button data-aid="{{items.deviceName}}" bindtap="touuidcfg" class="open-button" type='primary'>UUID配置 </button>
-       <text  class="earnest-money">信号：{{items.rssi}} 电量：{{items.battery}}V</text>
+       <text  class="earnest-money">  信号:{{items.rssi}}DB 电量:{{items.battery}}V</text>
     </view>
   </view>
 </view>
