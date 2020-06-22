@@ -335,7 +335,7 @@ let myProcess = {
     content[1] = idarr[1];
     content[2] = idarr[2];
     content[3] = idarr[3];
-    this.sendBleByAuth(deviceId, content, 0x57,
+    this.sendBleByAuth(deviceId, content, 0x01,
       function (msg) {
         console.log("recivelength::" + (msg.length) + "::" + (_this.getStrByHex(msg)))
         reFunc && reFunc(msg);
